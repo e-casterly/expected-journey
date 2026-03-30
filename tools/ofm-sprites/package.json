@@ -1,0 +1,13 @@
+{
+  "name": "@tools/ofm-sprites",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate": "node src/cli.cjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "potpack": "^2.1.0",
+    "sharp": "^0.34.4"
+  }
+}

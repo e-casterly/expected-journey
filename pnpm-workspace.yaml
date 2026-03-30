@@ -1,0 +1,8 @@
+packages:
+  - .
+  - tools/*
+
+ignoredBuiltDependencies:
+  - mapnik
+  - sharp
+  - unrs-resolver

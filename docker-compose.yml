@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17.7-alpine
+    container_name: ej-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: expected_journey
+      POSTGRES_USER: expected_journey
+      POSTGRES_PASSWORD: ej_password
+    volumes:
+      - ej_pgdata:/var/lib/postgresql/data
+
+volumes:
+  ej_pgdata:

@@ -1,57 +1,22 @@
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { z } from "zod";
-import { db } from "@/db";
-import { place } from "@/db/schema";
 import { UpdatePlaceSchema } from "@/lib/api/places";
-import { auth } from "@/lib/auth";
+import * as PlacesDAL from "@/dal/places";
 
 type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 };
 
-async function getSessionUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return session?.user ?? null;
-}
-
-async function findPlace(placeId: string) {
-  return db.query.place.findFirst({ where: eq(place.id, placeId) }) ?? null;
-}
-
 export async function GET(_: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   const { id } = await context.params;
-
-  const foundPlace = await db.query.place.findFirst({
-    where: and(eq(place.id, id), eq(place.userId, user.id)),
-  });
-
-  if (!foundPlace) {
+  const place = await PlacesDAL.getPlace(id);
+  if (!place) {
     return NextResponse.json({ message: "Place not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ place: foundPlace });
+  return NextResponse.json({ place });
 }
 
 export async function PATCH(request: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  const { id } = await context.params;
-
   let body: unknown;
   try {
     body = await request.json();
@@ -70,37 +35,19 @@ export async function PATCH(request: Request, context: RouteContext) {
     );
   }
 
-  const { tagIds: _tagIds, ...placeData } = parsed.data;
-
-  const [updatedPlace] = await db
-    .update(place)
-    .set(placeData)
-    .where(and(eq(place.id, id), eq(place.userId, user.id)))
-    .returning();
-
-  if (!updatedPlace) {
+  const { id } = await context.params;
+  const place = await PlacesDAL.updatePlace(id, parsed.data);
+  if (!place) {
     return NextResponse.json({ message: "Place not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ place: updatedPlace });
+  return NextResponse.json({ place });
 }
 
 export async function DELETE(_: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   const { id } = await context.params;
-
-  const [deletedPlace] = await db
-    .delete(place)
-    .where(and(eq(place.id, id), eq(place.userId, user.id)))
-    .returning({ id: place.id });
-
-  if (!deletedPlace) {
+  const deletedId = await PlacesDAL.deletePlace(id);
+  if (!deletedId) {
     return NextResponse.json({ message: "Place not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ ok: true, id: deletedPlace.id });
+  return NextResponse.json({ ok: true, id: deletedId });
 }

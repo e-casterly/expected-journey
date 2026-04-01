@@ -30,12 +30,11 @@ export type CreatePlaceTagInput = z.infer<typeof CreatePlaceTagSchema>;
 
 export type PlaceDto = {
   id: string;
-  userId: string;
   name: string;
   address: string | null;
   notes: string | null;
   lat: number;
-  lng: number;
+  lon: number;
   osmType: string | null;
   osmId: number | null;
   systemTags: PlaceSystemTag[];
@@ -101,7 +100,7 @@ export const UpdatePlaceSchema = z
       .optional()
       .or(z.literal("").transform(() => null)),
     lat: z.coerce.number().min(-90).max(90).optional(),
-    lng: z.coerce.number().min(-180).max(180).optional(),
+    lon: z.coerce.number().min(-180).max(180).optional(),
     osmType: z.string().optional(),
     osmId: z.number().int().optional(),
     tagIds: z.array(z.string()).optional(),

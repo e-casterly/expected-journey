@@ -14,7 +14,6 @@ export type TripStatus = z.infer<typeof TripStatusSchema>;
 
 export type TripDto = {
   id: string;
-  userId: string;
   title: string;
   slug: string | null;
   description: string | null;

@@ -1,53 +1,22 @@
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { z } from "zod";
-import { db } from "@/db";
-import { trip } from "@/db/schema";
 import { UpdateTripSchema } from "@/lib/api/trips";
-import { auth } from "@/lib/auth";
+import * as TripsDAL from "@/dal/trips";
 
 type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 };
 
-async function getSessionUser() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return session?.user ?? null;
-}
-
 export async function GET(_: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   const { id } = await context.params;
-
-  const foundTrip = await db.query.trip.findFirst({
-    where: and(eq(trip.id, id), eq(trip.userId, user.id)),
-  });
-
-  if (!foundTrip) {
+  const trip = await TripsDAL.getTrip(id);
+  if (!trip) {
     return NextResponse.json({ message: "Trip not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ trip: foundTrip });
+  return NextResponse.json({ trip });
 }
 
 export async function PATCH(request: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  const { id } = await context.params;
-
   let body: unknown;
   try {
     body = await request.json();
@@ -66,35 +35,19 @@ export async function PATCH(request: Request, context: RouteContext) {
     );
   }
 
-  const [updatedTrip] = await db
-    .update(trip)
-    .set(parsed.data)
-    .where(and(eq(trip.id, id), eq(trip.userId, user.id)))
-    .returning();
-
-  if (!updatedTrip) {
+  const { id } = await context.params;
+  const trip = await TripsDAL.updateTrip(id, parsed.data);
+  if (!trip) {
     return NextResponse.json({ message: "Trip not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ trip: updatedTrip });
+  return NextResponse.json({ trip });
 }
 
 export async function DELETE(_: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
   const { id } = await context.params;
-
-  const [deletedTrip] = await db
-    .delete(trip)
-    .where(and(eq(trip.id, id), eq(trip.userId, user.id)))
-    .returning({ id: trip.id });
-
-  if (!deletedTrip) {
+  const deletedId = await TripsDAL.deleteTrip(id);
+  if (!deletedId) {
     return NextResponse.json({ message: "Trip not found" }, { status: 404 });
   }
-
-  return NextResponse.json({ ok: true, id: deletedTrip.id });
+  return NextResponse.json({ ok: true, id: deletedId });
 }

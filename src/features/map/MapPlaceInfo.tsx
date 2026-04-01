@@ -13,7 +13,7 @@ export function MapPlaceInfo() {
   const setSelectedPlace = useSetSelectedPlace();
   const setMarkerPosition = useSetMarkerPosition();
 
-  const extras = selectedPlace?.extras;
+  const extras = selectedPlace?.extratags;
   if (!selectedPlace) {
     return null;
   }

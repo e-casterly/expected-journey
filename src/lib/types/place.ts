@@ -21,5 +21,5 @@ export type PlaceGeneral = {
 } & LatLon;
 
 export type PlaceDetailed = PlaceGeneral & {
-  extras?: PlaceExtra | null;
+  extratags?: PlaceExtra | null;
 };

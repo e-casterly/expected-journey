@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import cx from "classnames";
 
-type ButtonVariant = "contained" | "link" | "icon";
+type ButtonVariant = "contained" | "link" | "icon" | "none";
 type ButtonColor = "primary" | "secondary" | "destructive";
 
 type ButtonBaseProps = {
@@ -63,12 +63,13 @@ export function Button({
       "h-9 px-4 py-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     link: "underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     icon: "h-9 w-9 p-0 rounded-md shadow-md",
+    none: "",
   };
 
   const commonClasses = cx(
-    "inline-flex items-center justify-center text-base font-medium",
     variantClassNames[variant],
     {
+      "inline-flex items-center justify-center text-base font-medium": variant !== "none",
       "w-full": fullWidth,
       [iconByColor[color]]: variant === "icon",
       [containedByColor[color]]: variant === "contained",

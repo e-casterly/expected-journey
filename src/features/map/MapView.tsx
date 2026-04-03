@@ -39,10 +39,6 @@ export function MapView({
       lat: e.lngLat.lat,
       lon: e.lngLat.lng,
     };
-    mapRef.current?.jumpTo({
-      center: [nextPosition.lon, nextPosition.lat],
-      zoom: 14,
-    });
     setMarkerPosition(nextPosition);
     setSelectedPlace(null);
 
@@ -58,10 +54,6 @@ export function MapView({
           lat: data.lat,
           lon: data.lon,
         });
-        mapRef.current?.jumpTo({
-          center: [data.lon, data.lat],
-          zoom: 14,
-        });
       })
       .catch(() => {});
   }
@@ -73,7 +65,6 @@ export function MapView({
   function zoomOut() {
     mapRef.current?.zoomOut();
   }
-
 
   const viewCenter = initialPosition ?? DEFAULT_MAP_POSITION;
 
@@ -90,7 +81,7 @@ export function MapView({
         style={{ width: "100%", height: "100%" }}
         onClick={handleMapClick}
       >
-        <MapMarker />
+        <MapMarker mapRef={mapRef} />
       </Map>
 
       <MapSearch mapRef={mapRef} />

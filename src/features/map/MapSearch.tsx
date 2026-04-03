@@ -93,10 +93,7 @@ export function MapSearch({ mapRef }: MapSearchProps) {
     const result = item.value;
     const nextPosition = { lat: result.lat, lon: result.lon };
     setMarkerPosition(nextPosition);
-    mapRef.current?.jumpTo({
-      center: [result.lon, result.lat],
-      zoom: 14,
-    });
+
     skipNextSearchRef.current = true;
     setSearchQuery(item.label);
     setSelectedPlace(result);

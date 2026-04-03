@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
   buildPlaceObject,
-} from "@/lib/nominatim";
+} from "@/lib/formatOsmData";
 import { NominatimExtraTags, NominatimResult } from "@/lib/types/nominatim";
 import { PlaceExtra, PlaceGeneral } from "@/lib/types/place";
 

@@ -4,7 +4,7 @@ import { NominatimExtraTags, NominatimResult } from "@/lib/types/nominatim";
 import { PlaceExtra, PlaceGeneral } from "@/lib/types/place";
 import {
   buildPlaceObject,
-} from "@/lib/nominatim";
+} from "@/lib/formatOsmData";
 
 const LookupQuerySchema = z.object({
   osm_type: z.enum(["node", "way", "relation"]),

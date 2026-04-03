@@ -1,6 +1,7 @@
 import { NominatimExtraTags, NominatimResult } from "@/lib/types/nominatim";
 import { formatOsmTag } from "@/lib/formatOsmTag";
-import { PlaceExtra } from "@/lib/types/place";
+import capitalize from "@/lib/capitalize";
+import formatOsmExtratags from "@/lib/formatOsmExtratags";
 
 export function buildPlaceObject(
   item: NominatimResult & {
@@ -16,7 +17,7 @@ export function buildPlaceObject(
     lat: parseFloat(item.lat),
     lon: parseFloat(item.lon),
     type: formatOsmTag(item.type),
-    extratags: setExtraTags(item?.extratags),
+    extratags: formatOsmExtratags(item?.extratags),
   };
 }
 
@@ -33,32 +34,14 @@ export function buildLocality(result: NominatimResult): string {
 }
 
 export function buildName(result: NominatimResult): string {
-  if (result.name) return result.name;
+  const name = result.name;
   const type = formatOsmTag(result.type);
+  if (name && type) return capitalize([name, type].filter(Boolean).join(", "));
   const address = result.address;
   if (address) {
     const street = [address.road, address.house_number].filter(Boolean).join(" ");
-    return [type, street].filter(Boolean).join(", ");
+    return capitalize([type, street].filter(Boolean).join(", "));
   }
   return result.display_name;
-}
-
-export function setExtraTags(extra: NominatimExtraTags | undefined): PlaceExtra | null {
-  if (!extra) return null;
-
-  const phone = extra?.phone ?? extra?.["contact:phone"];
-  const website = extra?.website ?? extra?.["contact:website"];
-  const email = extra?.email ?? extra?.["contact:email"];
-  const instagram = extra?.["contact:instagram"];
-  return {
-    openingHours: extra?.opening_hours ?? "",
-    phone: phone ?? "",
-    website: website ?? "",
-    email: email ?? "",
-    instagram: instagram ?? "",
-    cuisine: extra?.cuisine ? formatOsmTag(extra.cuisine) : "",
-    wheelchair: extra?.wheelchair ?? "",
-    description: extra?.description ?? "",
-  };
 }
 

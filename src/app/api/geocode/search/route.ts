@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { buildPlaceObject } from "@/lib/nominatim";
+import { buildPlaceObject } from "@/lib/formatOsmData";
 import { NominatimResult } from "@/lib/types/nominatim";
 import { PlaceGeneral } from "@/lib/types/place";
 

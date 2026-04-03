@@ -34,7 +34,6 @@ export function MapPlaceInfo() {
         <p className="text-xl leading-snug font-medium text-zinc-900">
           {selectedPlace.name}
         </p>
-        {selectedPlace.type && <p className="text-sm">{selectedPlace.type}</p>}
       </div>
       <div className="flex flex-col gap-1 px-3 py-2 text-xs">
         {selectedPlace.osmId && selectedPlace.osmType && (

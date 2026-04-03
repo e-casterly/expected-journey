@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { PlacesListClient } from "@/features/places/PlacesListClient";
+import { PlaceClient } from "@/features/places/PlaceClient";
 
 export default async function PlacesPage() {
   const session = await auth.api.getSession({
@@ -12,5 +12,5 @@ export default async function PlacesPage() {
     redirect("/signin");
   }
 
-  return <PlacesListClient />;
+  return <PlaceClient />;
 }

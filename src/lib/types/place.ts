@@ -17,7 +17,6 @@ export type PlaceGeneral = {
   osmId: number;
   name: string;
   address: string;
-  type: string;
 } & LatLon;
 
 export type PlaceDetailed = PlaceGeneral & {

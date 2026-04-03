@@ -10,8 +10,7 @@ export function formatOsmTag(value: string): string {
   return value
     .split(";")
     .map((part) => {
-      const trimmed = part.trim().replace(/_/g, " ");
-      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+      return part.trim().replace(/_/g, " ");
     })
     .join(", ");
 }

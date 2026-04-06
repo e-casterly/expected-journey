@@ -9,7 +9,7 @@ import cx from "classnames";
 import { Label } from "@/components/shared/Label";
 import classNames from "classnames";
 import { ErrorList } from "@/components/shared/ErrorList";
-import { Icon } from "@/components/shared/Icon";
+import { IconButton } from "@/components/shared/IconButton";
 
 export type TextInputProps = {
   label?: string;
@@ -77,26 +77,12 @@ export function TextField({
           {...props}
         />
         {buttonCount > 0 && (
-          <div className="absolute inset-y-0 right-0 mt-0.5 flex items-center gap-0.5 pr-1">
+          <div className="absolute inset-y-0 right-0 flex items-center gap-0.5 pr-1.5">
             {showSearch && (
-              <button
-                type="button"
-                onClick={onSearch}
-                aria-label="Search"
-                className="flex h-7 w-7 items-center justify-center rounded text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700"
-              >
-                <Icon icon="Search" />
-              </button>
+              <IconButton onClick={onSearch} label="Search" icon="Search" />
             )}
             {showClear && (
-              <button
-                type="button"
-                onClick={onClear}
-                aria-label="Clear"
-                className="flex h-7 w-7 items-center justify-center rounded text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700"
-              >
-                <Icon icon="Close" />
-              </button>
+              <IconButton onClick={onSearch} label="Clear" icon="Close" />
             )}
           </div>
         )}

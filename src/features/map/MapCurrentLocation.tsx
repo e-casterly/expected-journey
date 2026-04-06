@@ -1,5 +1,4 @@
-import { Icon } from "@/components/shared/Icon";
-import { Button } from "@/components/shared/Button";
+import { IconButton } from "@/components/shared/IconButton";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useSetMarkerPosition } from "@/store";
 
@@ -12,13 +11,14 @@ export function MapCurrentLocation() {
   });
 
   return (
-    <Button
+    <IconButton
+      icon={"Location"}
+      label="Current location"
+      color="secondary"
+      variant="contained"
+      size="m"
       onClick={locate}
       disabled={isLocating}
-      variant="icon"
-      color="secondary"
-    >
-      <Icon icon="Location" size="s" />
-    </Button>
+    />
   );
 }

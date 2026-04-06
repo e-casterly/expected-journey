@@ -66,7 +66,7 @@ export function TripsListClient() {
           <div className="flex items-center gap-3">
             <Button
               type="button"
-              variant="link"
+              variant="text"
               color="primary"
               disabled={isLoading}
               onClick={() => void loadTrips()}

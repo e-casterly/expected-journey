@@ -1,12 +1,11 @@
-import { Button } from "@/components/shared/Button";
 import formatHostname from "@/lib/formatHostname";
 import {
   useSelectedPlace,
   useSetMarkerPosition,
   useSetSelectedPlace,
 } from "@/store";
-import { Icon } from "@/components/shared/Icon";
 import { MapSavedPlace } from "@/features/map/MapSavedPlace";
+import { IconButton } from "@/components/shared/IconButton";
 
 export function MapPlaceInfo() {
   const selectedPlace = useSelectedPlace();
@@ -19,26 +18,23 @@ export function MapPlaceInfo() {
   }
   return (
     <div className="absolute top-14 bottom-3 left-3 z-10 w-sm overflow-hidden rounded-xl bg-white shadow-sm backdrop-blur">
-      <Button
+      <IconButton
         className="absolute top-3 right-3"
-        variant="icon"
         color="secondary"
         onClick={() => {
           setSelectedPlace(null);
           setMarkerPosition(null);
         }}
-      >
-        <Icon icon="Close" />
-      </Button>
-      <div className="bg-zinc-100 ps-3 pe-14 py-2">
+        icon="Close"
+        label="Close"
+      />
+      <div className="bg-zinc-100 py-2 ps-3 pe-14">
         <p className="text-xl leading-snug font-medium text-zinc-900">
           {selectedPlace.name}
         </p>
       </div>
       <div className="flex flex-col gap-1 px-3 py-2 text-xs">
-        {selectedPlace.osmId && selectedPlace.osmType && (
-          <MapSavedPlace />
-        )}
+        {selectedPlace.osmId && selectedPlace.osmType && <MapSavedPlace />}
         {selectedPlace.address && <p>{selectedPlace.address}</p>}
         {extras?.phone && <p>{extras.phone}</p>}
         {extras?.email && (

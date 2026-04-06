@@ -35,9 +35,8 @@ export function PlaceListItem({ place }: PlaceListItemProps) {
 
   return (
     <li className="group relative">
-      <Button
-        variant="none"
-        className="border border-zinc-200 w-full rounded-lg px-4 py-3 text-left"
+      <button
+        className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-left cursor-pointer"
         onClick={handleClick}
       >
         <div>
@@ -46,10 +45,10 @@ export function PlaceListItem({ place }: PlaceListItemProps) {
             <p className="text-sm text-zinc-500">{place.address}</p>
           )}
         </div>
-      </Button>
+      </button>
       <div className="invisible absolute top-2 right-2 flex gap-1 group-hover:visible">
-        <Button variant="icon">
-          <Icon icon={"Edit"} />
+        <Button isIcon>
+          <Icon icon="Edit" />
         </Button>
         <Button
           variant="contained"

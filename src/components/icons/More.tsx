@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgMore = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><circle cx={4} cy={12} r={2} fill="currentColor" /><circle cx={12} cy={12} r={2} fill="currentColor" /><circle cx={20} cy={12} r={2} fill="currentColor" /></svg>;
+export default SvgMore;

@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useId, useState } from "react";
+import { useId } from "react";
 import {
   Dropdown,
   DropdownContent,
@@ -8,13 +8,8 @@ import {
   useDropdownContext,
 } from "@/components/shared/dropdown";
 import { TextField, type TextInputProps } from "@/components/shared/TextField";
-
-export type AutocompleteItem<TValue = string> = {
-  id: string;
-  label: string;
-  value: TValue;
-  description?: string;
-};
+import { useAutocompleteKeyboard } from "@/components/shared/autocomplete/useAutocompleteKeyboard";
+import type { AutocompleteItem } from "@/components/shared/autocomplete";
 
 export type AutocompleteFieldProps<TValue = string> = Omit<
   TextInputProps,
@@ -43,70 +38,24 @@ function AutocompleteFieldInner<TValue = string>({
   ...props
 }: AutocompleteFieldProps<TValue>) {
   const { getReferenceProps, setReference, open, onOpenChange } = useDropdownContext();
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const listboxId = useId();
   const hasQuery = String(value ?? "").trim().length > 0;
-
-  function handleClear() {
-    onQueryChange("");
-    onOpenChange(false);
-    setHighlightedIndex(-1);
-    onClear?.();
-  }
-  const activeDescendantId =
-    open && highlightedIndex >= 0
-      ? `${listboxId}-item-${items[highlightedIndex]?.id}`
-      : undefined;
-
-  useEffect(() => {
-    if (!open) setHighlightedIndex(-1);
-  }, [open]);
 
   function handleSelect(item: AutocompleteItem<TValue>) {
     onSelect(item);
     onOpenChange(false);
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    onKeyDown?.(event);
-    if (event.defaultPrevented) return;
+  const { highlightedIndex, setHighlightedIndex, activeDescendantId, handleKeyDown } =
+    useAutocompleteKeyboard({ items, listboxId, open, onOpenChange, onSelect: handleSelect });
 
-    if (!open && event.key === "ArrowDown" && items.length > 0) {
-      event.preventDefault();
-      onOpenChange(true);
-      setHighlightedIndex(0);
-      return;
-    }
-
-    if (!open) return;
-
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      setHighlightedIndex((current) =>
-        current < items.length - 1 ? current + 1 : 0,
-      );
-      return;
-    }
-
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setHighlightedIndex((current) =>
-        current > 0 ? current - 1 : items.length - 1,
-      );
-      return;
-    }
-
-    if (event.key === "Enter" && highlightedIndex >= 0) {
-      event.preventDefault();
-      const item = items[highlightedIndex];
-      if (item) handleSelect(item);
-      return;
-    }
-
-    if (event.key === "Escape") {
-      onOpenChange(false);
-    }
+  function handleClear() {
+    onQueryChange("");
+    onOpenChange(false);
+    onClear?.();
   }
+
+  const shouldOpenOnFocus = isLoading || hasQuery || items.length > 0;
 
   return (
     <>
@@ -130,11 +79,12 @@ function AutocompleteFieldInner<TValue = string>({
         }}
         onFocus={(event) => {
           onFocus?.(event);
-          if (isLoading || hasQuery || items.length > 0) {
-            onOpenChange(true);
-          }
+          if (shouldOpenOnFocus) onOpenChange(true);
         }}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (!event.defaultPrevented) handleKeyDown(event);
+        }}
       />
 
       <DropdownContent id={listboxId}>
@@ -172,10 +122,8 @@ function AutocompleteFieldInner<TValue = string>({
 export function AutocompleteField<TValue = string>(
   props: AutocompleteFieldProps<TValue>,
 ) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <Dropdown open={isOpen} onOpenChange={setIsOpen} matchTriggerWidth>
+    <Dropdown matchTriggerWidth>
       <AutocompleteFieldInner {...props} />
     </Dropdown>
   );

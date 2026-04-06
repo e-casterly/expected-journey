@@ -1,7 +1,7 @@
 import {
   AutocompleteField,
   type AutocompleteItem,
-} from "@/components/shared/AutocompleteField";
+} from "@/components/shared/autocomplete";
 import React, { useEffect, useRef, useState } from "react";
 import {
   useSetMarkerPosition,

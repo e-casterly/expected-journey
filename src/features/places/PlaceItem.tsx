@@ -1,14 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/shared/Button";
 import type { PlaceDto } from "@/lib/api/places";
-import { Icon } from "@/components/shared/Icon";
 import { useSetMarkerPosition, useSetSelectedPlace } from "@/store";
+import { IconButton } from "@/components/shared/IconButton";
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownList,
+  DropdownTrigger,
+  MenuItem,
+} from "@/components/shared/dropdown";
 
-type PlaceListItemProps = {
+type PlaceItemProps = {
   place: PlaceDto;
 };
 
-export function PlaceListItem({ place }: PlaceListItemProps) {
+export function PlaceItem({ place }: PlaceItemProps) {
   const queryClient = useQueryClient();
   const setMarkerPosition = useSetMarkerPosition();
   const setSelectedPlace = useSetSelectedPlace();
@@ -29,14 +36,18 @@ export function PlaceListItem({ place }: PlaceListItemProps) {
       osmType: place.osmType ?? "",
       osmId: place.osmId ?? 0,
       lat: place.lat,
-      lon: place.lon
+      lon: place.lon,
     });
+  }
+
+  function editPlace() {
+    console.log("editPlace");
   }
 
   return (
     <li className="group relative">
       <button
-        className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-left cursor-pointer"
+        className="w-full cursor-pointer rounded-lg border border-zinc-200 px-4 py-3 text-left"
         onClick={handleClick}
       >
         <div>
@@ -46,18 +57,22 @@ export function PlaceListItem({ place }: PlaceListItemProps) {
           )}
         </div>
       </button>
-      <div className="invisible absolute top-2 right-2 flex gap-1 group-hover:visible">
-        <Button isIcon>
-          <Icon icon="Edit" />
-        </Button>
-        <Button
-          variant="contained"
-          color="destructive"
-          disabled={isPending}
-          onClick={() => deletePlace()}
-        >
-          Delete
-        </Button>
+      <div className="absolute top-2 right-2 flex gap-1">
+        <Dropdown role="menu" clickToToggle>
+          <DropdownTrigger asChild>
+            <IconButton icon="More" label="More" />
+          </DropdownTrigger>
+          <DropdownContent className="min-w-32">
+            <DropdownList>
+              <MenuItem onSelect={editPlace} disabled={isPending}>
+                Edit
+              </MenuItem>
+              <MenuItem onSelect={() => deletePlace()} disabled={isPending}>
+                Delete
+              </MenuItem>
+            </DropdownList>
+          </DropdownContent>
+        </Dropdown>
       </div>
     </li>
   );

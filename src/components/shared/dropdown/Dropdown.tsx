@@ -11,12 +11,21 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { DropdownProvider } from "@/components/shared/dropdown/DropdownContext";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
-type DropdownProps = {
-  children: ReactNode;
+type ControlledDropdownProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+};
+
+type UncontrolledDropdownProps = {
+  open?: undefined;
+  onOpenChange?: undefined;
+  defaultOpen?: boolean;
+};
+
+type DropdownProps = (ControlledDropdownProps | UncontrolledDropdownProps) & {
+  children: ReactNode;
   role?: "listbox" | "menu" | "dialog";
   matchTriggerWidth?: boolean;
   clickToToggle?: boolean;
@@ -24,12 +33,19 @@ type DropdownProps = {
 
 export function Dropdown({
   children,
-  open,
-  onOpenChange,
+  open: openProp,
+  onOpenChange: onOpenChangeProp,
   role: roleProp = "listbox",
   matchTriggerWidth = false,
   clickToToggle = false,
+  ...rest
 }: DropdownProps) {
+  const defaultOpen = "defaultOpen" in rest ? rest.defaultOpen : false;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp : uncontrolledOpen;
+  const onOpenChange = isControlled ? onOpenChangeProp : setUncontrolledOpen;
   const { context, floatingStyles, refs } = useFloating({
     open,
     onOpenChange,

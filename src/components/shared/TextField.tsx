@@ -82,7 +82,7 @@ export function TextField({
               <IconButton onClick={onSearch} label="Search" icon="Search" />
             )}
             {showClear && (
-              <IconButton onClick={onSearch} label="Clear" icon="Close" />
+              <IconButton onClick={onClear} label="Clear" icon="Close" />
             )}
           </div>
         )}

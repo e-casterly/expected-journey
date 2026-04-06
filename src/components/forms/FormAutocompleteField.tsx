@@ -2,7 +2,7 @@ import {
   AutocompleteField,
   type AutocompleteFieldProps,
   type AutocompleteItem,
-} from "@/components/shared/AutocompleteField";
+} from "@/components/shared/autocomplete";
 import { useFieldContext } from "@/lib/hooks/useAppForm";
 import { formatFormErrors } from "@/lib/formatFormErrors";
 

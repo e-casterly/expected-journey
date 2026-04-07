@@ -8,6 +8,8 @@ import {
 import { MapSavedPlace } from "@/features/map/MapSavedPlace";
 import { IconButton } from "@/components/shared/IconButton";
 import { PlaceDetailed } from "@/lib/types/place";
+import Image from "next/image";
+import cx from "classnames";
 
 export function MapPlaceInfo() {
   const selectedPlace = useSelectedPlace();
@@ -29,13 +31,49 @@ export function MapPlaceInfo() {
   });
 
   const extras = detailedPlace?.extratags;
+  const wikidata = detailedPlace?.wikidata;
+  const coverUrl = wikidata?.imageUrl ?? wikidata?.logoUrl;
 
+  console.log(detailedPlace);
   if (!selectedPlace) {
     return null;
   }
 
   return (
     <div className="absolute top-14 bottom-3 left-3 z-10 w-sm overflow-hidden rounded-xl bg-white shadow-sm backdrop-blur">
+      {(coverUrl || wikidata?.logoUrl) && (
+        <div
+          className={cx(
+            "relative w-full",
+            coverUrl ? "h-40" : "flex items-center justify-center p-3"
+          )}
+        >
+          {coverUrl && (
+            <Image
+              src={coverUrl}
+              alt={selectedPlace.name}
+              fill
+              className="object-cover"
+              sizes="384px"
+            />
+          )}
+          {wikidata?.logoUrl && (
+            <div
+              className={cx({
+                "absolute top-3 left-3 rounded-xl bg-white p-2": coverUrl,
+              })}
+            >
+              <Image
+                src={wikidata.logoUrl}
+                alt={`${selectedPlace.name} logo`}
+                width={120}
+                height={60}
+                className="object-contain"
+              />
+            </div>
+          )}
+        </div>
+      )}
       <IconButton
         className="absolute top-3 right-3"
         color="secondary"
@@ -53,6 +91,9 @@ export function MapPlaceInfo() {
       </div>
       <div className="flex flex-col gap-1 px-3 py-2 text-xs">
         {selectedPlace.osmId && selectedPlace.osmType && <MapSavedPlace />}
+        {wikidata?.description && (
+          <p>{wikidata.description}</p>
+        )}
         {selectedPlace.address && <p>{selectedPlace.address}</p>}
         {isLoading && <p className="text-zinc-400">Loading details...</p>}
         {extras?.phone && <p>{extras.phone}</p>}

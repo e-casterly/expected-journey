@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { NominatimExtraTags, NominatimResult } from "@/lib/types/nominatim";
-import { PlaceExtra, PlaceGeneral } from "@/lib/types/place";
-import {
-  buildPlaceObject,
-} from "@/lib/formatOsmData";
+import { PlaceDetailed, PlaceGeneral } from "@/lib/types/place";
+import { buildPlaceObject } from "@/lib/formatOsmData";
+import { fetchWikidata } from "@/lib/fetchWikidata";
 
 const LookupQuerySchema = z.object({
   osm_type: z.enum(["node", "way", "relation"]),
@@ -15,9 +14,7 @@ type NominatimLookupResult = NominatimResult & {
   extratags?: NominatimExtraTags;
 };
 
-type LookupResponse = PlaceGeneral & {
-  extratags: PlaceExtra | null;
-};
+type LookupResponse = PlaceGeneral & PlaceDetailed;
 
 const OSM_TYPE_PREFIX: Record<string, string> = {
   node: "N",
@@ -44,14 +41,13 @@ export async function GET(request: Request) {
     osm_ids: osmIds,
     format: "json",
     addressdetails: "1",
-    extratags: "1"
+    extratags: "1",
   });
 
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/lookup?${params.toString()}`,
       {
-        method: "GET",
         headers: {
           Accept: "application/json",
           "User-Agent": "the-expected-journey/1.0",
@@ -72,14 +68,15 @@ export async function GET(request: Request) {
     }
 
     const item = results[0];
-    console.log(item);
     if (!item) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
+    console.log(item);
+    const wikidataId = item.extratags?.wikidata;
+    const place = buildPlaceObject(item);
+    const wikidata = wikidataId ? await fetchWikidata(wikidataId) : null;
 
-    const result = buildPlaceObject(item);
-
-    return NextResponse.json<LookupResponse | null>(result);
+    return NextResponse.json<LookupResponse>({ ...place, wikidata });
   } catch {
     return NextResponse.json(
       { message: "Failed to reach geocoding service" },

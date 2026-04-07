@@ -19,6 +19,15 @@ export type PlaceGeneral = {
   address: string;
 } & LatLon;
 
+export type WikidataInfo = {
+  label: string | null;
+  description: string | null;
+  website: string | null;
+  logoUrl: string | null;
+  imageUrl: string | null;
+};
+
 export type PlaceDetailed = PlaceGeneral & {
   extratags?: PlaceExtra | null;
+  wikidata?: WikidataInfo | null;
 };

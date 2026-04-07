@@ -63,6 +63,11 @@ export async function GET(request: Request) {
       );
     }
 
+    const SKIPPED_CATEGORIES = new Set(["highway", "waterway"]);
+    if (SKIPPED_CATEGORIES.has(item.category ?? "")) {
+      return new NextResponse(null, { status: 204 });
+    }
+
     const result = buildPlaceObject(item);
 
     return NextResponse.json<ReverseResponse>(result);

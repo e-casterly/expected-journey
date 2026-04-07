@@ -47,13 +47,14 @@ export function MapView({
       lon: String(e.lngLat.lng),
     });
     fetch(`/api/geocode/reverse?${params}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 204) return null;
+        return r.json();
+      })
       .then((data) => {
+        if (!data) return;
         setSelectedPlace(data);
-        setMarkerPosition({
-          lat: data.lat,
-          lon: data.lon,
-        });
+        setMarkerPosition({ lat: data.lat, lon: data.lon });
       })
       .catch(() => {});
   }

@@ -1,36 +1,39 @@
+import { type RefObject, useEffect, useState } from "react";
 import {
   AutocompleteField,
   type AutocompleteItem,
 } from "@/components/shared/autocomplete";
-import React, { useEffect, useRef, useState } from "react";
 import {
   useSetMarkerPosition,
   useSetSelectedPlace,
 } from "@/store";
 import { PlaceGeneral } from "@/lib/types/place";
 import { MapRef } from "react-map-gl/maplibre";
+import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 
 type MapSearchProps = {
-  mapRef: React.RefObject<MapRef | null>;
+  mapRef: RefObject<MapRef | null>;
 };
+
+function buildGeocodeParams(query: string, center?: { lat: number; lng: number }) {
+  const params = new URLSearchParams({ q: query });
+  if (center) {
+    params.set("lat", String(center.lat));
+    params.set("lon", String(center.lng));
+  }
+  return params;
+}
 
 export function MapSearch({ mapRef }: MapSearchProps) {
   const setSelectedPlace = useSetSelectedPlace();
   const setMarkerPosition = useSetMarkerPosition();
 
+  const [displayValue, setDisplayValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PlaceGeneral[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
-  const skipNextSearchRef = useRef(false);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery.trim());
-    }, 1200);
-    return () => window.clearTimeout(id);
-  }, [searchQuery]);
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 1200);
 
   useEffect(() => {
     if (debouncedSearchQuery.length < 3) {
@@ -38,20 +41,12 @@ export function MapSearch({ mapRef }: MapSearchProps) {
       return;
     }
 
-    if (skipNextSearchRef.current) {
-      skipNextSearchRef.current = false;
-      return;
-    }
-
     let cancelled = false;
     setIsSearchLoading(true);
 
     const center = mapRef.current?.getCenter();
-    const params = new URLSearchParams({ q: debouncedSearchQuery });
-    if (center) {
-      params.set("lat", String(center.lat));
-      params.set("lon", String(center.lng));
-    }
+    const params = buildGeocodeParams(debouncedSearchQuery, center);
+
     fetch(`/api/geocode/search?${params}`)
       .then((r) => r.json())
       .then((data) => {
@@ -70,16 +65,13 @@ export function MapSearch({ mapRef }: MapSearchProps) {
   }, [debouncedSearchQuery]);
 
   function handleSearch() {
-    const query = searchQuery.trim();
+    const query = displayValue.trim();
     if (query.length < 1) return;
 
     setIsSearchLoading(true);
-    const params = new URLSearchParams({ q: query });
     const center = mapRef.current?.getCenter();
-    if (center) {
-      params.set("lat", String(center.lat));
-      params.set("lon", String(center.lng));
-    }
+    const params = buildGeocodeParams(query, center);
+
     fetch(`/api/geocode/search?${params}`)
       .then((r) => r.json())
       .then((data) => {
@@ -91,11 +83,8 @@ export function MapSearch({ mapRef }: MapSearchProps) {
 
   function handleSearchSelect(item: AutocompleteItem<PlaceGeneral>) {
     const result = item.value;
-    const nextPosition = { lat: result.lat, lon: result.lon };
-    setMarkerPosition(nextPosition);
-
-    skipNextSearchRef.current = true;
-    setSearchQuery(item.label);
+    setMarkerPosition({ lat: result.lat, lon: result.lon });
+    setDisplayValue(item.label);
     setSelectedPlace(result);
 
     const params = new URLSearchParams({
@@ -104,10 +93,7 @@ export function MapSearch({ mapRef }: MapSearchProps) {
     });
     fetch(`/api/geocode/lookup?${params}`)
       .then((r) => r.json())
-      .then((data) => {
-        console.log(data);
-        setSelectedPlace(data);
-      })
+      .then((data) => setSelectedPlace(data))
       .catch(() => {});
   }
 
@@ -115,7 +101,7 @@ export function MapSearch({ mapRef }: MapSearchProps) {
     <div className="absolute top-3 left-3 z-10 w-sm">
       <AutocompleteField
         placeholder="Search location..."
-        value={searchQuery}
+        value={displayValue}
         items={searchResults.map((r) => ({
           id: r.id,
           label: r.name,
@@ -125,11 +111,12 @@ export function MapSearch({ mapRef }: MapSearchProps) {
         isLoading={isSearchLoading}
         emptyMessage="Type at least 3 characters"
         noResultsMessage="No results found"
-        onQueryChange={(value) => setSearchQuery(value)}
-        onSelect={handleSearchSelect}
-        onClear={() => {
-          setSearchResults([]);
+        onQueryChange={(value) => {
+          setDisplayValue(value);
+          setSearchQuery(value);
         }}
+        onSelect={handleSearchSelect}
+        onClear={() => setSearchResults([])}
         onSearch={handleSearch}
       />
     </div>

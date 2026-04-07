@@ -86,15 +86,6 @@ export function MapSearch({ mapRef }: MapSearchProps) {
     setMarkerPosition({ lat: result.lat, lon: result.lon });
     setDisplayValue(item.label);
     setSelectedPlace(result);
-
-    const params = new URLSearchParams({
-      osm_type: result.osmType,
-      osm_id: String(result.osmId),
-    });
-    fetch(`/api/geocode/lookup?${params}`)
-      .then((r) => r.json())
-      .then((data) => setSelectedPlace(data))
-      .catch(() => {});
   }
 
   return (

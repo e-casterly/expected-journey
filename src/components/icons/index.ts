@@ -1,3 +1,5 @@
+export { default as BookmarkAdd } from './BookmarkAdd'
+export { default as BookmarkFulled } from './BookmarkFulled'
 export { default as Close } from './Close'
 export { default as Edit } from './Edit'
 export { default as Location } from './Location'

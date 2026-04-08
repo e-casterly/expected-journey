@@ -88,12 +88,12 @@ export function MapPlaceInfo() {
         <p className="text-xl leading-snug font-medium text-zinc-900">
           {selectedPlace.name}
         </p>
-      </div>
-      <div className="flex flex-col gap-1 px-3 py-2 text-xs">
-        {selectedPlace.osmId && selectedPlace.osmType && <MapSavedPlace />}
         {wikidata?.description && (
-          <p>{wikidata.description}</p>
+          <p className="text-xs">{wikidata.description}</p>
         )}
+      </div>
+      {selectedPlace.osmId && selectedPlace.osmType && <MapSavedPlace />}
+      <div className="flex flex-col gap-1 px-3 py-2 text-xs">
         {selectedPlace.address && <p>{selectedPlace.address}</p>}
         {isLoading && <p className="text-zinc-400">Loading details...</p>}
         {extras?.phone && <p>{extras.phone}</p>}

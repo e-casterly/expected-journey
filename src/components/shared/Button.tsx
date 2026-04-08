@@ -3,9 +3,9 @@ import { ComponentPropsWithoutRef, ReactNode } from "react";
 import cx from "classnames";
 import { Spinner } from "@/components/shared/Spinner";
 
-type ButtonVariant = "contained" | "text" | "ghost";
+type ButtonVariant = "contained" | "outline" | "text" | "ghost";
 type ButtonColor = "primary" | "secondary" | "destructive";
-type ButtonSize = "s" | "m" | "l";
+export type ButtonSize = "s" | "m" | "l";
 
 export type ButtonBaseProps = {
   children: ReactNode;
@@ -46,6 +46,16 @@ export function Button({
       "bg-destructive not-disabled:hover:bg-destructive/90 not-disabled:focus-visible:ring-destructive text-white",
   };
 
+  const outlineByColor: Record<ButtonColor, string> = {
+    primary:
+      "bg-white border-primary/90 text-primary/90 not-disabled:hover:border-primary not-disabled:hover:text-primary not-disabled:focus-visible:ring-primary",
+    secondary:
+      "bg-white not-disabled:hover:bg-gray-100 not-disabled:focus-visible:ring-secondary shadow-md",
+    destructive:
+      "bg-white not-disabled:hover:bg-destructive/90 not-disabled:focus-visible:ring-destructive",
+  };
+
+
   const textByColor: Record<ButtonColor, string> = {
     primary:
       "text-primary not-disabled:hover:text-primary/80 not-disabled:focus-visible:ring-primary",
@@ -58,6 +68,8 @@ export function Button({
   const variantClassNames: Record<ButtonVariant, string> = {
     contained:
       "rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    outline:
+      "rounded-md focus-visible:outline-none border focus-visible:ring-2",
     text: "underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     ghost: "not-disabled:hover:bg-gray-100",
   };
@@ -69,9 +81,9 @@ export function Button({
   };
 
   const iconSizeClassNames: Record<ButtonSize, string> = {
-    s: "h-6 w-6 p-1",
-    m: "h-9 w-9 p-2",
-    l: "h-12 w-12 p-3",
+    s: "h-6 w-6",
+    m: "h-9 w-9",
+    l: "h-12 w-12",
   };
 
   const commonClasses = cx(
@@ -84,6 +96,7 @@ export function Button({
       "rounded-md": isIcon,
       "w-full": fullWidth,
       [containedByColor[color]]: variant === "contained",
+      [outlineByColor[color]]: variant === "outline",
       [textByColor[color]]: variant === "text",
       "bg-disabled": variant === "contained" && disabled,
     },

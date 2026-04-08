@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import classNames from "classnames";
 import { FloatingPortal } from "@floating-ui/react";

@@ -2,13 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { PlaceDto } from "@/lib/api/places";
 import { useSetMarkerPosition, useSetSelectedPlace } from "@/store";
 import { IconButton } from "@/components/shared/IconButton";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownList,
-  DropdownTrigger,
-  MenuItem,
-} from "@/components/shared/dropdown";
+import { Dropdown } from "@/components/shared/dropdown";
 
 type PlaceItemProps = {
   place: PlaceDto;
@@ -58,19 +52,19 @@ export function PlaceItem({ place }: PlaceItemProps) {
       </button>
       <div className="absolute top-2 right-2 flex gap-1">
         <Dropdown role="menu" clickToToggle>
-          <DropdownTrigger asChild>
+          <Dropdown.Trigger asChild>
             <IconButton icon="More" label="More" />
-          </DropdownTrigger>
-          <DropdownContent className="min-w-32">
-            <DropdownList>
-              <MenuItem onSelect={editPlace} disabled={isPending}>
+          </Dropdown.Trigger>
+          <Dropdown.Content className="min-w-32">
+            <Dropdown.List>
+              <Dropdown.MenuItem onSelectAction={editPlace} disabled={isPending}>
                 Edit
-              </MenuItem>
-              <MenuItem onSelect={() => deletePlace()} disabled={isPending}>
+              </Dropdown.MenuItem>
+              <Dropdown.MenuItem onSelectAction={() => deletePlace()} disabled={isPending}>
                 Delete
-              </MenuItem>
-            </DropdownList>
-          </DropdownContent>
+              </Dropdown.MenuItem>
+            </Dropdown.List>
+          </Dropdown.Content>
         </Dropdown>
       </div>
     </li>

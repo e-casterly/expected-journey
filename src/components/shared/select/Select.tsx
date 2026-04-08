@@ -2,14 +2,7 @@
 
 import { type ComponentPropsWithoutRef, useId, useState } from "react";
 import classNames from "classnames";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownEmpty,
-  DropdownItem,
-  DropdownList,
-  useDropdownContext,
-} from "@/components/shared/dropdown";
+import { Dropdown, useDropdownContext } from "@/components/shared/dropdown";
 import { Label } from "@/components/shared/Label";
 import { ErrorList } from "@/components/shared/ErrorList";
 import { useSelectKeyboard } from "./useSelectKeyboard";
@@ -204,36 +197,36 @@ function SelectInner<TValue = string>(props: SelectProps<TValue>) {
         </svg>
       </button>
 
-      <DropdownContent
+      <Dropdown.Content
         id={listboxId}
         aria-multiselectable={props.multiple || undefined}
       >
         {options.length > 0 ? (
-          <DropdownList>
+          <Dropdown.List>
             {options.map((option, index) => {
               const selected = isOptionSelected(option.value);
               return (
-                <DropdownItem
+                <Dropdown.Option
                   key={option.id}
                   id={`${listboxId}-option-${option.id}`}
                   highlighted={highlightedIndex === index}
                   selected={selected}
                   onPointerEnter={() => setHighlightedIndex(index)}
-                  onSelect={() => handleSelect(option)}
+                  onSelectAction={() => handleSelect(option)}
                 >
                   {props.multiple ? (
                     <CheckboxOption label={option.label} selected={selected} />
                   ) : (
                     option.label
                   )}
-                </DropdownItem>
+                </Dropdown.Option>
               );
             })}
-          </DropdownList>
+          </Dropdown.List>
         ) : (
-          <DropdownEmpty>{emptyMessage}</DropdownEmpty>
+          <Dropdown.Empty>{emptyMessage}</Dropdown.Empty>
         )}
-      </DropdownContent>
+      </Dropdown.Content>
 
       <ErrorList messages={errorMessages} errorId={errorId} />
     </div>

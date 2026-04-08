@@ -1,17 +1,16 @@
 "use client";
 
 import classNames from "classnames";
-import { PointerEvent, ReactNode } from "react";
+import { ComponentPropsWithoutRef, PointerEvent, ReactNode } from "react";
 
-type DropdownItemProps = {
+type DropdownItemProps = Pick<ComponentPropsWithoutRef<"div">, "onPointerEnter"> & {
   id?: string;
   children: ReactNode;
   highlighted?: boolean;
   selected?: boolean;
   disabled?: boolean;
   className?: string;
-  onSelect?: () => void;
-  onPointerEnter?: () => void;
+  onSelectAction?: () => void;
 };
 
 export function DropdownItem({
@@ -21,7 +20,7 @@ export function DropdownItem({
   selected = false,
   disabled = false,
   className,
-  onSelect,
+  onSelectAction,
   onPointerEnter,
 }: DropdownItemProps) {
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
@@ -49,7 +48,7 @@ export function DropdownItem({
       onPointerEnter={onPointerEnter}
       onPointerDown={handlePointerDown}
       onClick={() => {
-        if (!disabled) onSelect?.();
+        if (!disabled) onSelectAction?.();
       }}
     >
       {children}

@@ -2,13 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownList,
-  DropdownTrigger,
-  MenuItem,
-} from "@/components/shared/dropdown";
+import { Dropdown } from "@/components/shared/dropdown";
 import { User } from "better-auth";
 import { signOutAction } from "@/app/actions/auth";
 
@@ -30,7 +24,7 @@ export default function HeaderAuth({ user }: HeaderAuthProps) {
 
   return (
     <Dropdown role="menu" clickToToggle>
-      <DropdownTrigger asChild>
+      <Dropdown.Trigger asChild>
         <button type="button" className="flex items-center gap-1 cursor-pointer">
           {user.image ? (
             <Image
@@ -49,19 +43,15 @@ export default function HeaderAuth({ user }: HeaderAuthProps) {
             {user.name ?? user.email}
           </span>
         </button>
-      </DropdownTrigger>
-      <DropdownContent>
-        <DropdownList>
-          <MenuItem asChild>
+      </Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.List>
+          <Dropdown.MenuItem asChild>
             <Link href="/profile">Profile</Link>
-          </MenuItem>
-          <form action={signOutAction}>
-            <MenuItem asChild>
-              <button type="submit">Sign out</button>
-            </MenuItem>
-          </form>
-        </DropdownList>
-      </DropdownContent>
+          </Dropdown.MenuItem>
+          <Dropdown.MenuItem onSelectAction={signOutAction}>Sign out</Dropdown.MenuItem>
+        </Dropdown.List>
+      </Dropdown.Content>
     </Dropdown>
   );
 }

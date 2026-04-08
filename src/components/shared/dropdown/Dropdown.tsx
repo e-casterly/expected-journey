@@ -13,6 +13,12 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { DropdownProvider } from "@/components/shared/dropdown/DropdownContext";
+import { DropdownContent } from "@/components/shared/dropdown/DropdownContent";
+import { DropdownTrigger } from "@/components/shared/dropdown/DropdownTrigger";
+import { DropdownItem } from "@/components/shared/dropdown/DropdownItem";
+import { DropdownList } from "@/components/shared/dropdown/DropdownList";
+import { DropdownEmpty } from "@/components/shared/dropdown/DropdownEmpty";
+import { DropdownMenuItem } from "@/components/shared/dropdown/DropdownMenuItem";
 import { ReactNode, useState } from "react";
 
 type ControlledDropdownProps = {
@@ -33,7 +39,7 @@ type DropdownProps = (ControlledDropdownProps | UncontrolledDropdownProps) & {
   clickToToggle?: boolean;
 };
 
-export function Dropdown({
+function DropdownRoot({
   children,
   open: openProp,
   onOpenChange: onOpenChangeProp,
@@ -96,3 +102,12 @@ export function Dropdown({
     </DropdownProvider>
   );
 }
+
+export const Dropdown = Object.assign(DropdownRoot, {
+  Content: DropdownContent,
+  Trigger: DropdownTrigger,
+  Option: DropdownItem,
+  List: DropdownList,
+  Empty: DropdownEmpty,
+  MenuItem: DropdownMenuItem,
+});

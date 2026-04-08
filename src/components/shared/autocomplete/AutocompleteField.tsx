@@ -1,12 +1,5 @@
 import { useId } from "react";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownEmpty,
-  DropdownItem,
-  DropdownList,
-  useDropdownContext,
-} from "@/components/shared/dropdown";
+import { Dropdown, useDropdownContext } from "@/components/shared/dropdown";
 import { TextField, type TextInputProps } from "@/components/shared/TextField";
 import { useAutocompleteKeyboard } from "@/components/shared/autocomplete/useAutocompleteKeyboard";
 import type { AutocompleteItem } from "@/components/shared/autocomplete";
@@ -87,18 +80,18 @@ function AutocompleteFieldInner<TValue = string>({
         }}
       />
 
-      <DropdownContent id={listboxId}>
+      <Dropdown.Content id={listboxId}>
         {isLoading ? (
-          <DropdownEmpty>Loading...</DropdownEmpty>
+          <Dropdown.Empty>Loading...</Dropdown.Empty>
         ) : items.length > 0 ? (
-          <DropdownList>
+          <Dropdown.List>
             {items.map((item, index) => (
-              <DropdownItem
+              <Dropdown.Option
                 key={item.id}
                 id={`${listboxId}-item-${item.id}`}
                 highlighted={highlightedIndex === index}
                 onPointerEnter={() => setHighlightedIndex(index)}
-                onSelect={() => handleSelect(item)}
+                onSelectAction={() => handleSelect(item)}
               >
                 <span>{item.label}</span>
                 {item.description ? (
@@ -106,15 +99,15 @@ function AutocompleteFieldInner<TValue = string>({
                     {item.description}
                   </span>
                 ) : null}
-              </DropdownItem>
+              </Dropdown.Option>
             ))}
-          </DropdownList>
+          </Dropdown.List>
         ) : (
-          <DropdownEmpty>
+          <Dropdown.Empty>
             {hasQuery ? noResultsMessage : emptyMessage}
-          </DropdownEmpty>
+          </Dropdown.Empty>
         )}
-      </DropdownContent>
+      </Dropdown.Content>
     </>
   );
 }

@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     lon: String(parsed.data.lon),
     format: "jsonv2",
     addressdetails: "1",
-    extratags: "1",
+    extratags: "1"
   });
 
   try {
@@ -56,16 +56,15 @@ export async function GET(request: Request) {
       .json()
       .catch(() => null)) as NominatimReverseResult | null;
     console.log(item);
-    if (!response.ok || !item) {
-      return NextResponse.json(
-        { message: "Reverse geocoding request failed" },
-        { status: response.status }
-      );
+    if (!item || "error" in item) {
+      return new NextResponse(null, { status: 204 });
     }
 
-    const SKIPPED_CATEGORIES = new Set(["highway", "waterway"]);
-    if (SKIPPED_CATEGORIES.has(item.category ?? "")) {
-      return new NextResponse(null, { status: 204 });
+    if (!response.ok) {
+      return NextResponse.json(
+        { message: "Reverse geocoding request failed" },
+        { status: response.status },
+      );
     }
 
     const result = buildPlaceObject(item);

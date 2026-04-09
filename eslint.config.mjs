@@ -17,7 +17,22 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // External tools
+    "tools/**",
   ]),
+  // Allow variables prefixed with _ to be unused (intentional omit pattern, e.g. const { foo: _foo, ...rest } = obj)
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          varsIgnorePattern: "^_",
+          argsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
   ...storybook.configs["flat/recommended"]
 ]);
 

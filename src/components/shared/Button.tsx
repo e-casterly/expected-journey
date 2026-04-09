@@ -87,10 +87,9 @@ export function Button({
   };
 
   const commonClasses = cx(
+    "inline-flex items-center justify-center text-base font-medium",
     variantClassNames[variant],
     {
-      "inline-flex items-center justify-center text-base font-medium":
-        variant !== "ghost",
       [sizeClassNames[size]]: !isIcon,
       [iconSizeClassNames[size]]: isIcon,
       "rounded-md": isIcon,

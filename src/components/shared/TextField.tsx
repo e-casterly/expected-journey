@@ -18,6 +18,7 @@ export type TextInputProps = {
   errorMessages?: string[];
   afterInput?: ReactNode;
   inputRef?: Ref<HTMLInputElement>;
+  containerRef?: Ref<HTMLDivElement>;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
@@ -37,6 +38,7 @@ export function TextField({
   errorMessages,
   afterInput,
   inputRef,
+  containerRef,
   value,
   ...props
 }: TextInputProps) {
@@ -57,7 +59,7 @@ export function TextField({
           {label}
         </Label>
       )}
-      <div className="relative">
+      <div className="relative" ref={containerRef}>
         <input
           ref={inputRef}
           id={inputId}
@@ -79,10 +81,20 @@ export function TextField({
         {buttonCount > 0 && (
           <div className="absolute inset-y-0 right-0 flex items-center gap-0.5 pr-1.5">
             {showSearch && (
-              <IconButton onClick={onSearch} label="Search" icon="Search" />
+              <IconButton
+                onClick={onSearch}
+                onMouseDown={(e) => e.preventDefault()}
+                label="Search"
+                icon="Search"
+              />
             )}
             {showClear && (
-              <IconButton onClick={onClear} label="Clear" icon="Close" />
+              <IconButton
+                onClick={onClear}
+                onMouseDown={(e) => e.preventDefault()}
+                label="Clear"
+                icon="Close"
+              />
             )}
           </div>
         )}

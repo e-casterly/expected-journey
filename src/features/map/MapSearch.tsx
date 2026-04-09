@@ -1,12 +1,10 @@
-import { type RefObject, useEffect, useState } from "react";
+import { type RefObject, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   AutocompleteField,
   type AutocompleteItem,
 } from "@/components/shared/autocomplete";
-import {
-  useSetMarkerPosition,
-  useSetSelectedPlace,
-} from "@/store";
+import { useSetMarkerPosition, useSetSelectedPlace } from "@/store";
 import { PlaceGeneral } from "@/lib/types/place";
 import { MapRef } from "react-map-gl/maplibre";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
@@ -30,56 +28,27 @@ export function MapSearch({ mapRef }: MapSearchProps) {
 
   const [displayValue, setDisplayValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<PlaceGeneral[]>([]);
-  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [debouncedSearchQuery, flushSearchQuery] = useDebouncedValue(searchQuery, 12000);
 
-  const debouncedSearchQuery = useDebouncedValue(searchQuery, 1200);
+  const { data: searchResults = [], isFetching } = useQuery({
+    queryKey: ["geocode-search", debouncedSearchQuery],
+    queryFn: async () => {
+      const center = mapRef.current?.getCenter();
+      const params = buildGeocodeParams(debouncedSearchQuery, center);
+      const r = await fetch(`/api/geocode/search?${params}`);
+      const data = await r.json();
+      return (data.suggestions ?? []) as PlaceGeneral[];
+    },
+    enabled: debouncedSearchQuery.length >= 3,
+    staleTime: 30_000,
+  });
 
-  useEffect(() => {
-    if (debouncedSearchQuery.length < 3) {
-      setSearchResults([]);
-      return;
-    }
+  // Show spinner while the user is still typing (debounce pending) or fetch is in flight
+  const isSearchLoading =
+    (searchQuery.length >= 3 && searchQuery !== debouncedSearchQuery) || isFetching;
 
-    let cancelled = false;
-    setIsSearchLoading(true);
-
-    const center = mapRef.current?.getCenter();
-    const params = buildGeocodeParams(debouncedSearchQuery, center);
-
-    fetch(`/api/geocode/search?${params}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (!cancelled) {
-          setSearchResults(data.suggestions ?? []);
-          setIsSearchLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setIsSearchLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [debouncedSearchQuery]);
-
-  function handleSearch() {
-    const query = displayValue.trim();
-    if (query.length < 1) return;
-
-    setIsSearchLoading(true);
-    const center = mapRef.current?.getCenter();
-    const params = buildGeocodeParams(query, center);
-
-    fetch(`/api/geocode/search?${params}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setSearchResults(data.suggestions ?? []);
-        setIsSearchLoading(false);
-      })
-      .catch(() => setIsSearchLoading(false));
-  }
+  // Hide stale results while the query is being cleared (before debounce fires)
+  const visibleResults = searchQuery.length >= 3 ? searchResults : [];
 
   function handleSearchSelect(item: AutocompleteItem<PlaceGeneral>) {
     const result = item.value;
@@ -93,7 +62,7 @@ export function MapSearch({ mapRef }: MapSearchProps) {
       <AutocompleteField
         placeholder="Search location..."
         value={displayValue}
-        items={searchResults.map((r) => ({
+        items={visibleResults.map((r) => ({
           id: r.id,
           label: r.name,
           description: r.address,
@@ -107,8 +76,8 @@ export function MapSearch({ mapRef }: MapSearchProps) {
           setSearchQuery(value);
         }}
         onSelect={handleSearchSelect}
-        onClear={() => setSearchResults([])}
-        onSearch={handleSearch}
+        onClear={() => {}}
+        onSearch={flushSearchQuery}
       />
     </div>
   );

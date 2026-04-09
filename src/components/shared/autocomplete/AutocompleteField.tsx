@@ -31,6 +31,7 @@ function AutocompleteFieldInner<TValue = string>({
   ...props
 }: AutocompleteFieldProps<TValue>) {
   const { getReferenceProps, setReference, open, onOpenChange } = useDropdownContext();
+
   const listboxId = useId();
   const hasQuery = String(value ?? "").trim().length > 0;
 
@@ -39,8 +40,22 @@ function AutocompleteFieldInner<TValue = string>({
     onOpenChange(false);
   }
 
+  // Ensure the dropdown is open when search is triggered (button click or Enter),
+  // so results are visible once they arrive.
+  function handleSearch() {
+    onOpenChange(true);
+    onSearch?.();
+  }
+
   const { highlightedIndex, setHighlightedIndex, activeDescendantId, handleKeyDown } =
-    useAutocompleteKeyboard({ items, listboxId, open, onOpenChange, onSelect: handleSelect });
+    useAutocompleteKeyboard({
+      items,
+      listboxId,
+      open,
+      onOpenChange,
+      onSelect: handleSelect,
+      onSearch: handleSearch,
+    });
 
   function handleClear() {
     onQueryChange("");
@@ -59,12 +74,12 @@ function AutocompleteFieldInner<TValue = string>({
           "aria-controls": open ? listboxId : undefined,
           "aria-activedescendant": activeDescendantId,
         })}
-        inputRef={setReference as (node: HTMLInputElement | null) => void}
+        containerRef={setReference as (node: HTMLDivElement | null) => void}
         value={value}
         autoComplete="off"
         aria-autocomplete="list"
         onClear={onClear ? handleClear : undefined}
-        onSearch={onSearch}
+        onSearch={onSearch ? handleSearch : undefined}
         onChange={(event) => {
           onQueryChange(event.target.value);
           onOpenChange(event.target.value.trim().length > 0);

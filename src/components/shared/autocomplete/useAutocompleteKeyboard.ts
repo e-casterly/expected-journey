@@ -7,6 +7,7 @@ type UseAutocompleteKeyboardOptions<TValue> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (item: AutocompleteItem<TValue>) => void;
+  onSearch?: () => void;
 };
 
 type UseAutocompleteKeyboardResult = {
@@ -22,6 +23,7 @@ export function useAutocompleteKeyboard<TValue>({
   open,
   onOpenChange,
   onSelect,
+  onSearch,
 }: UseAutocompleteKeyboardOptions<TValue>): UseAutocompleteKeyboardResult {
   const [prevOpen, setPrevOpen] = useState(open);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -38,6 +40,17 @@ export function useAutocompleteKeyboard<TValue>({
       : undefined;
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (highlightedIndex >= 0) {
+        const item = items[highlightedIndex];
+        if (item) onSelect(item);
+      } else {
+        onSearch?.();
+      }
+      return;
+    }
+
     if (!open && event.key === "ArrowDown" && items.length > 0) {
       event.preventDefault();
       onOpenChange(true);
@@ -60,13 +73,6 @@ export function useAutocompleteKeyboard<TValue>({
       setHighlightedIndex((current) =>
         current > 0 ? current - 1 : items.length - 1,
       );
-      return;
-    }
-
-    if (event.key === "Enter" && highlightedIndex >= 0) {
-      event.preventDefault();
-      const item = items[highlightedIndex];
-      if (item) onSelect(item);
       return;
     }
 

@@ -5,16 +5,17 @@ type SlotProps = Record<string, unknown> & {
   children?: ReactNode;
 };
 
-function composeEventHandlers(
-  slotHandler: unknown,
-  childHandler: unknown,
-) {
+type EventHandler = (...args: unknown[]) => unknown;
+
+function composeEventHandlers(slotHandler: EventHandler, childHandler: unknown) {
   // Child handler runs first. If it calls event.preventDefault(),
   // the slot handler is skipped — the child retains full control over the event.
   return (event: unknown, ...args: unknown[]) => {
-    (childHandler as Function)?.(event, ...args);
+    if (typeof childHandler === "function") {
+      (childHandler as EventHandler)(event, ...args);
+    }
     if (!(event as Event)?.defaultPrevented) {
-      (slotHandler as Function)?.(event, ...args);
+      slotHandler(event, ...args);
     }
   };
 }
@@ -41,7 +42,7 @@ export function Slot({ children, ...slotProps }: SlotProps) {
         ...(slotProps.style as CSSProperties | undefined),
       };
     } else if (key.startsWith("on") && typeof slotProps[key] === "function") {
-      mergedProps[key] = composeEventHandlers(slotProps[key], childProps[key]);
+      mergedProps[key] = composeEventHandlers(slotProps[key] as EventHandler, childProps[key]);
     } else {
       mergedProps[key] = slotProps[key];
     }

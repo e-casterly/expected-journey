@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useEffect, useState } from "react";
+import { type KeyboardEvent, useState } from "react";
 import type { AutocompleteItem } from "@/components/shared/autocomplete";
 
 type UseAutocompleteKeyboardOptions<TValue> = {
@@ -23,16 +23,19 @@ export function useAutocompleteKeyboard<TValue>({
   onOpenChange,
   onSelect,
 }: UseAutocompleteKeyboardOptions<TValue>): UseAutocompleteKeyboardResult {
+  const [prevOpen, setPrevOpen] = useState(open);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  // Reset highlight when dropdown closes (derived state pattern — avoids setState in effect)
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (!open) setHighlightedIndex(-1);
+  }
 
   const activeDescendantId =
     open && highlightedIndex >= 0
       ? `${listboxId}-item-${items[highlightedIndex]?.id}`
       : undefined;
-
-  useEffect(() => {
-    if (!open) setHighlightedIndex(-1);
-  }, [open]);
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (!open && event.key === "ArrowDown" && items.length > 0) {

@@ -43,30 +43,27 @@ export function SignUpForm() {
           noValidate
           className="flex flex-col items-center justify-stretch space-y-4"
         >
-          <form.AppField
-            name="name"
-            children={(field) => <field.TextField label="Name" type="text" />}
-          />
-          <form.AppField
-            name="email"
-            children={(field) => (
+          <form.AppField name="name">
+            {(field) => <field.TextField label="Name" type="text" />}
+          </form.AppField>
+          <form.AppField name="email">
+            {(field) => (
               <field.TextField
                 label="Email"
                 type="email"
                 autoComplete="email"
               />
             )}
-          />
-          <form.AppField
-            name="password"
-            children={(field) => (
+          </form.AppField>
+          <form.AppField name="password">
+            {(field) => (
               <field.TextField
                 label="Password"
                 type="password"
                 autoComplete="new-password"
               />
             )}
-          />
+          </form.AppField>
           <form.ErrorMessage />
           <form.SubscribeButton label="Sign up" fullWidth />
         </form>

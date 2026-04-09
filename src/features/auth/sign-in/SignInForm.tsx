@@ -42,26 +42,24 @@ export function SignInForm() {
           noValidate
           className="flex flex-col items-center justify-stretch space-y-4"
         >
-          <form.AppField
-            name="email"
-            children={(field) => (
+          <form.AppField name="email">
+            {(field) => (
               <field.TextField
                 label="Email"
                 type="email"
                 autoComplete="email"
               />
             )}
-          />
-          <form.AppField
-            name="password"
-            children={(field) => (
+          </form.AppField>
+          <form.AppField name="password">
+            {(field) => (
               <field.TextField
                 label="Password"
                 type="password"
                 autoComplete="current-password"
               />
             )}
-          />
+          </form.AppField>
           <form.ErrorMessage />
           <form.SubscribeButton label="Sign in" fullWidth />
         </form>

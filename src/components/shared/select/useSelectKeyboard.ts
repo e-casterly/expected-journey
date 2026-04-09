@@ -27,24 +27,21 @@ export function useSelectKeyboard<TValue>({
   initialHighlightIndex,
   onSelect,
 }: UseSelectKeyboardOptions<TValue>): UseSelectKeyboardResult {
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [highlightedIndex, setHighlightedIndex] = useState(open ? initialHighlightIndex : -1);
   const typeaheadRef = useRef("");
   const typeaheadTimeoutRef = useRef<number | null>(null);
-  const initialHighlightIndexRef = useRef(initialHighlightIndex);
-  initialHighlightIndexRef.current = initialHighlightIndex;
+
+  // Sync highlight with open/close transitions (derived state pattern — avoids setState in effect)
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    setHighlightedIndex(open ? initialHighlightIndex : -1);
+  }
 
   const activeDescendantId =
     open && highlightedIndex >= 0
       ? `${listboxId}-option-${options[highlightedIndex]?.id}`
       : undefined;
-
-  useEffect(() => {
-    if (open) {
-      setHighlightedIndex(initialHighlightIndexRef.current);
-    } else {
-      setHighlightedIndex(-1);
-    }
-  }, [open]);
 
   useEffect(() => {
     return () => {
@@ -65,7 +62,7 @@ export function useSelectKeyboard<TValue>({
     }, 500);
 
     const search = typeaheadRef.current;
-    const startIndex = open ? highlightedIndex : initialHighlightIndexRef.current;
+    const startIndex = open ? highlightedIndex : initialHighlightIndex;
     const afterCurrent = options.findIndex(
       (opt, i) => i > startIndex && opt.label.toLowerCase().startsWith(search),
     );
@@ -92,7 +89,7 @@ export function useSelectKeyboard<TValue>({
       ) {
         event.preventDefault();
         onOpenChange(true);
-        setHighlightedIndex(initialHighlightIndexRef.current);
+        setHighlightedIndex(initialHighlightIndex);
         return;
       }
       if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {

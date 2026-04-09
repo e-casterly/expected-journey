@@ -20,7 +20,6 @@ export function ButtonGroup({
     <div
       role="group"
       aria-label={ariaLabel}
-      aria-orientation={orientation}
       className={cx(
         "flex w-fit items-stretch",
         isHorizontal ? "flex-row" : "flex-col",

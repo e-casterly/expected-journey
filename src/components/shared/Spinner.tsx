@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function Spinner() {
+export function Spinner({className}: {className?: string}) {
   const base: React.CSSProperties = {
     animation: "spinner-fade 0.8s linear infinite",
     transformBox: "fill-box",
@@ -12,6 +12,7 @@ export function Spinner() {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
+      className={className}
     >
       <circle cx="6"  cy="6"  r="1" fill="currentColor" style={{ ...base, animationDelay: "-0.1s" }} />
       <circle cx="4"  cy="12" r="1" fill="currentColor" style={{ ...base, animationDelay: "-0.2s" }} />

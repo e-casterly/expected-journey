@@ -6,12 +6,22 @@ import {
 import classNames from "classnames";
 import { Label } from "@/components/shared/Label";
 import { ErrorList } from "@/components/shared/ErrorList";
+import cx from "classnames";
+
+export type TextareaSize = "s" | "m" | "l";
+
+const sizeClassNames: Record<TextareaSize, string> = {
+  s: "px-2 py-1 text-xs",
+  m: "px-3 py-2 text-sm",
+  l: "px-4 py-3 text-base",
+};
 
 export type TextareaFieldProps = {
   label?: string;
   labelClassName?: string;
   wrapperClassName?: string;
   errorMessages?: string[];
+  size?: TextareaSize;
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 } & ComponentPropsWithoutRef<"textarea">;
@@ -21,6 +31,7 @@ export function TextareaField({
   labelClassName,
   wrapperClassName,
   errorMessages,
+  size = "m",
   className,
   onChange,
   onBlur,
@@ -31,18 +42,19 @@ export function TextareaField({
   const showError = Boolean(errorMessages?.length);
 
   return (
-    <div className={classNames("w-full", wrapperClassName)}>
+    <div className={classNames("w-full flex", wrapperClassName)}>
       {label && (
-        <Label htmlFor={inputId} className={labelClassName}>
+        <Label htmlFor={inputId} className={cx("mb-0.5", labelClassName)}>
           {label}
         </Label>
       )}
       <textarea
         id={inputId}
         className={classNames(
-          "mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-500 transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none",
+          "w-full rounded-md border bg-white text-zinc-900 placeholder-zinc-500 transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none",
+          sizeClassNames[size],
           showError ? "border-destructive" : "border-stroke",
-          className,
+          className
         )}
         aria-invalid={showError || undefined}
         aria-describedby={showError ? errorId : undefined}

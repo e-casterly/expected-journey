@@ -1,25 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedPlace } from "@/store";
 import type { CreatePlaceInput, PlaceDto, PlaceResponse } from "@/lib/api/places";
 import { IconButton } from "@/components/shared/IconButton";
+import { Button } from "@/components/shared/Button";
+import { Icon } from "@/components/shared/Icon";
 
-export function MapSavedPlace() {
+type MapSavedPlaceProps = {
+  savedPlace: PlaceDto | null | undefined;
+};
+
+export function MapSavedPlace({ savedPlace }: MapSavedPlaceProps) {
   const selectedPlace = useSelectedPlace();
   const queryClient = useQueryClient();
-
-  const { data: savedPlace } = useQuery<PlaceDto | null>({
-    queryKey: ["places", "osm", selectedPlace?.osmType, selectedPlace?.osmId],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        osmType: selectedPlace!.osmType!,
-        osmId: String(selectedPlace!.osmId),
-      });
-      const r = await fetch(`/api/places?${params}`);
-      const data = await r.json();
-      return data.place as PlaceDto | null;
-    },
-    enabled: !!selectedPlace?.osmType && !!selectedPlace?.osmId,
-  });
 
   const { mutate: savePlace, isPending: isSaving } = useMutation({
     mutationFn: (input: CreatePlaceInput) =>
@@ -64,16 +56,16 @@ export function MapSavedPlace() {
   }
 
   return (
-    <div className="flex gap-1 px-3 pt-2">
-      <IconButton
-        onClick={handleClick}
+    <div className="border-stroke flex flex-col items-start gap-2 border-b px-3 py-2">
+      <Button
         disabled={isPending}
-        variant="outline"
-        size="m"
-        label={savedPlace ? "Remove place" : "Save place"}
         isLoading={isPending}
-        icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"}
-      />
+        onClick={handleClick}
+        variant="outline"
+      >
+        <Icon icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"} />
+        {savedPlace ? "Remove place" : "Save place"}
+      </Button>
     </div>
   );
 }

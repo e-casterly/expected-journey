@@ -1,4 +1,3 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { PlaceDto } from "@/lib/api/places";
 import { useSetMarkerPosition, useSetSelectedPlace } from "@/store";
 import { IconButton } from "@/components/shared/IconButton";
@@ -9,16 +8,8 @@ type PlaceItemProps = {
 };
 
 export function PlaceItem({ place }: PlaceItemProps) {
-  const queryClient = useQueryClient();
   const setMarkerPosition = useSetMarkerPosition();
   const setSelectedPlace = useSetSelectedPlace();
-
-  const { mutate: deletePlace, isPending } = useMutation({
-    mutationFn: () => fetch(`/api/places/${place.id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["places"] });
-    },
-  });
 
   function handleClick() {
     setMarkerPosition({ lat: place.lat, lon: place.lon });
@@ -33,40 +24,18 @@ export function PlaceItem({ place }: PlaceItemProps) {
     });
   }
 
-  function editPlace() {
-    console.log("editPlace");
-  }
-
   return (
     <li className="group relative">
       <button
         className="w-full cursor-pointer rounded-lg border border-zinc-200 px-4 py-3 text-left"
         onClick={handleClick}
       >
-        <div>
-          <p className="font-medium text-zinc-900">{place.name}</p>
-          {place.address && (
-            <p className="text-sm text-zinc-500">{place.address}</p>
-          )}
-        </div>
+        <p className="font-medium ">{place.name}</p>
+        {place.notes && <p className="text-sm ">{place.notes}</p>}
+        {place.address && (
+          <p className="text-sm text-zinc-500">{place.address}</p>
+        )}
       </button>
-      <div className="absolute top-2 right-2 flex gap-1">
-        <Dropdown role="menu" clickToToggle>
-          <Dropdown.Trigger asChild>
-            <IconButton icon="More" label="More" />
-          </Dropdown.Trigger>
-          <Dropdown.Content className="min-w-32">
-            <Dropdown.List>
-              <Dropdown.MenuItem onSelectAction={editPlace} disabled={isPending}>
-                Edit
-              </Dropdown.MenuItem>
-              <Dropdown.MenuItem onSelectAction={() => deletePlace()} disabled={isPending}>
-                Delete
-              </Dropdown.MenuItem>
-            </Dropdown.List>
-          </Dropdown.Content>
-        </Dropdown>
-      </div>
     </li>
   );
 }

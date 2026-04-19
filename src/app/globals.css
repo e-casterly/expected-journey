@@ -3,18 +3,32 @@
 :root {
   --font-base: "Outfit", sans-serif;
 
-  --background: oklch(0.9878 0.0002 105.84);
-  --foreground: oklch(0.18 0.04 230);
+  --background: #FFFFFF;
 
-  --primary: oklch(0.4937 0.0808 208.96);
+  --foreground: #0F444F;
+  --foreground-inverse: #FFFFFF;
+  --foreground-note: #F2F1F1;
+
+  --primary: #2B9A95;
+  --primary-d: #227672;
+  --primary-l: #E6F4F4;
   --secondary: #fff;
+
+  --contrast: #F79681;
+
   --success: oklch(0.60 0.16 175);
   --destructive: oklch(0.48 0.22 25);
 
-  --stroke: oklch(0.7783 0.0023 208.96);
+  --stroke: #E9F1F1;
+  --stroke-primary: #31AFAA;
   --disabled: oklch(0.9006 0.0023 208.96);
 
-  --gradient: linear-gradient(180deg,rgba(216, 240, 245, 1) 0%, rgba(221, 229, 202, 1) 100%);
+  --shadow-header: 0px 1px 2px 0px rgba(0,0,0,0.10),
+  0px 2px 6px 0px rgba(77,139,148,0.20);
+  --inset-shadow-card: inset 0px 0px 12px 0px rgba(0,0,0,0.25);
+
+  --shadow-field: 0px 2px 5px 0px rgba(0,0,0,0.25);
+  --inset-shadow-field: inset 0px 2px 5px 0px rgba(0,0,0,0.25);
 }
 
 @theme inline {
@@ -22,21 +36,33 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-foreground-inverse: var(--foreground-inverse);
+
   --color-primary: var(--primary);
+  --color-primary-d: var(--primary-d);
+  --color-primary-l: var(--primary-l);
+
   --color-secondary: var(--secondary);
+
+  --color-contrast: var(--contrast);
+
   --color-success: var(--success);
   --color-destructive: var(--destructive);
+
   --color-stroke: var(--stroke);
+  --color-stroke-primary: var(--stroke-primary);
+
   --color-disabled: var(--disabled);
+
+  --shadow-header: var(--shadow-header);
+  --inset-shadow-card: var(--inset-shadow-card);
+  --shadow-field: var(--shadow-field);
+  --inset-shadow-field: var(--inset-shadow-field);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-}
-
-.bg-gradient {
-  background-image: var(--gradient);
 }
 
 svg {

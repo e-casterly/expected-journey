@@ -50,13 +50,10 @@ export async function fetchWikidata(
     const description = capitalize(entity.descriptions?.[lang]?.value) ?? null;
     const website = entity.claims?.P856?.[0]?.mainsnak?.datavalue?.value ?? null;
 
-    const logoFilename = entity.claims?.P154?.[0]?.mainsnak?.datavalue?.value ?? null;
-    const logoUrl = logoFilename ? buildImageUrl(logoFilename) : null;
-
     const imageFilename = entity.claims?.P18?.[0]?.mainsnak?.datavalue?.value ?? null;
     const imageUrl = imageFilename ? buildImageUrl(imageFilename) : null;
 
-    return { label, description, website, logoUrl, imageUrl };
+    return { label, description, website, imageUrl };
   } catch {
     return null;
   }

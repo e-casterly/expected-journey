@@ -18,7 +18,7 @@ export function IconButton({ icon, label, size = "s", variant = "ghost", ...prop
   const sizeClassNames: Record<ButtonSize, string> = {
     s: "h-4 w-4",
     m: "h-5 w-5",
-    l: "h-8 w-8",
+    l: "h-6 w-6",
   };
   return (
     <Button isIcon aria-label={label} size={size} variant={variant} {...props}>

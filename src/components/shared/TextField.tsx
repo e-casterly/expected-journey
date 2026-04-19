@@ -66,7 +66,7 @@ export function TextField({
           name={name}
           value={value}
           className={cx(
-            "h-9 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-500 transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none",
+            "text-foreground shadow-field inset-shadow-field focus:ring-contrast h-10 w-full rounded-full border bg-[#FBFBFB] px-4 py-2 text-base placeholder-[#94948A] transition focus:ring-2 focus:outline-none",
             { "border-stroke": !showError },
             { "border-destructive": showError },
             paddingClassName,
@@ -79,13 +79,14 @@ export function TextField({
           {...props}
         />
         {buttonCount > 0 && (
-          <div className="absolute inset-y-0 right-0 flex items-center gap-0.5 pr-1.5">
+          <div className="absolute inset-y-0 right-0 flex items-center gap-0.5 pr-2 text-[#B4B4AD]">
             {showSearch && (
               <IconButton
                 onClick={onSearch}
                 onMouseDown={(e) => e.preventDefault()}
                 label="Search"
                 icon="Search"
+                size="l"
               />
             )}
             {showClear && (
@@ -94,6 +95,7 @@ export function TextField({
                 onMouseDown={(e) => e.preventDefault()}
                 label="Clear"
                 icon="Close"
+                size="l"
               />
             )}
           </div>

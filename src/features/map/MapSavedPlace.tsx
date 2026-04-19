@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedPlace } from "@/store";
 import type { CreatePlaceInput, PlaceDto, PlaceResponse } from "@/lib/api/places";
-import { IconButton } from "@/components/shared/IconButton";
-import { Button } from "@/components/shared/Button";
 import { Icon } from "@/components/shared/Icon";
 
 type MapSavedPlaceProps = {
@@ -35,7 +33,7 @@ export function MapSavedPlace({ savedPlace }: MapSavedPlaceProps) {
 
   if (!selectedPlace) return null;
 
-  const isPending = isSaving || isRemoving;
+  // const isPending = isSaving || isRemoving;
 
   function handleClick() {
     if (!selectedPlace) return;
@@ -56,16 +54,15 @@ export function MapSavedPlace({ savedPlace }: MapSavedPlaceProps) {
   }
 
   return (
-    <div className="border-stroke flex flex-col items-start gap-2 border-b px-3 py-2">
-      <Button
-        disabled={isPending}
-        isLoading={isPending}
-        onClick={handleClick}
-        variant="outline"
-      >
-        <Icon icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"} />
-        {savedPlace ? "Remove place" : "Save place"}
-      </Button>
-    </div>
+    <button
+      onClick={handleClick}
+      className="border-stroke hover:bg-primary-l text-primary grid cursor-pointer grid-cols-[auto_1fr] items-center gap-2 border-b bg-white px-4 py-2 text-left text-sm"
+    >
+      <Icon
+        icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"}
+        className="h-6 w-6 shrink-0"
+      />
+      {savedPlace ? "Saved place" : "Save place"}
+    </button>
   );
 }

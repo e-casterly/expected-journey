@@ -52,52 +52,34 @@ export function MapPlaceInfo() {
 
   const extras = detailedPlace?.extratags;
   const wikidata = detailedPlace?.wikidata;
-  const coverUrl = wikidata?.imageUrl ?? wikidata?.logoUrl;
+  const coverUrl = wikidata?.imageUrl;
 
   if (!selectedPlace) {
     return null;
   }
 
   return (
-    <div className="absolute top-14 bottom-3 left-3 z-10 flex w-sm flex-col overflow-hidden rounded-xl bg-white shadow-sm backdrop-blur">
-      {isLoading && (
+    <div className="shadow-card absolute top-16 bottom-3 left-3 z-10 flex w-sm flex-col overflow-hidden rounded-3xl bg-white/90">
+      {isLoading ? (
         <div className="flex flex-1 items-center justify-center px-3 pt-3">
           <Spinner className="h-10 w-10" />
         </div>
-      )}
-      {!isLoading && (
+      ) : (
         <>
-          {(coverUrl || wikidata?.logoUrl) && (
+          {coverUrl && (
             <div
               className={cx(
                 "relative w-full",
                 coverUrl ? "h-40" : "flex items-center justify-center p-3"
               )}
             >
-              {coverUrl && (
-                <Image
-                  src={coverUrl}
-                  alt={selectedPlace.name}
-                  fill
-                  className="object-cover"
-                  sizes="384px"
-                />
-              )}
-              {wikidata?.logoUrl && (
-                <div
-                  className={cx({
-                    "absolute top-3 left-3 rounded-xl bg-white p-2": coverUrl,
-                  })}
-                >
-                  <Image
-                    src={wikidata.logoUrl}
-                    alt={`${selectedPlace.name} logo`}
-                    width={120}
-                    height={60}
-                    className="object-contain"
-                  />
-                </div>
-              )}
+              <Image
+                src={coverUrl}
+                alt={selectedPlace.name}
+                fill
+                className="object-cover"
+                sizes="384px"
+              />
             </div>
           )}
           <IconButton
@@ -110,12 +92,15 @@ export function MapPlaceInfo() {
             icon="Close"
             label="Close"
           />
-          <div className="py-2 ps-3 pe-14 bg-olive-100">
-            <p className="text-xl leading-snug font-medium">
-              {selectedPlace.name}
-            </p>
+          <div
+            className={cx(
+              "border-stroke border-b-2 py-2 ps-4",
+              !coverUrl ? "pe-14" : "pe-4"
+            )}
+          >
+            <p className="text-lg font-medium">{selectedPlace.name}</p>
             {wikidata?.description && (
-              <p className="text-xs">{wikidata.description}</p>
+              <p className="text-sm">{wikidata.description}</p>
             )}
           </div>
           {selectedPlace.osmId && selectedPlace.osmType && (
@@ -124,13 +109,28 @@ export function MapPlaceInfo() {
           {savedPlace && (
             <MapPlaceNote key={savedPlace.id} place={savedPlace} />
           )}
-          <MapPlaceString value={selectedPlace.address} icon="Location2" />
-          <MapPlaceString
-            value={`${selectedPlace.lat}, ${selectedPlace.lon}`}
-            icon="Location"
-          />
+          {selectedPlace.address && (
+            <MapPlaceString string={selectedPlace.address} icon="Location2" />
+          )}
+          {selectedPlace.lat && selectedPlace.lon && (
+            <MapPlaceString
+              string={`${selectedPlace.lat}, ${selectedPlace.lon}`}
+              icon="Location"
+            />
+          )}
+          {extras?.phone && (
+            <MapPlaceString string={extras?.phone} icon="Phone" />
+          )}
+          {extras?.website && (
+            <MapPlaceString
+              href={extras.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              string={formatHostname(extras?.website)}
+              icon="Website"
+            />
+          )}
           <div className="flex flex-col gap-1 px-3 py-2 text-xs">
-            {extras?.phone && <p>{extras.phone}</p>}
             {extras?.email && (
               <a
                 href={`mailto:${extras.email}`}
@@ -140,16 +140,6 @@ export function MapPlaceInfo() {
               </a>
             )}
             {extras?.openingHours && <p>{extras.openingHours}</p>}
-            {extras?.website && (
-              <a
-                href={extras.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="truncate text-xs text-blue-600 hover:underline"
-              >
-                {formatHostname(extras.website)}
-              </a>
-            )}
             {extras?.instagram && <p>{extras.instagram}</p>}
           </div>
         </>

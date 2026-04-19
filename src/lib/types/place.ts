@@ -23,7 +23,6 @@ export type WikidataInfo = {
   label: string | null;
   description: string | null;
   website: string | null;
-  logoUrl: string | null;
   imageUrl: string | null;
 };
 

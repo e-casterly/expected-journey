@@ -11,14 +11,14 @@ export default async function Header() {
   });
   const user = session?.user;
   return (
-    <header className="bg-gradient border-b border-zinc-200">
+    <header className="bg-linear-to-r from-[#E9F1F1] via-[#F3F3E9] via-83% to-[#F3F3E9] shadow-header">
       <div className="container mx-auto flex h-14 items-center justify-between">
         <Link href="/">
           <Image
             src="/logo.svg"
             alt="Expected Journey logo"
-            width={256}
-            height={30}
+            width={312}
+            height={36}
           />
         </Link>
         <div className="flex items-center gap-6">

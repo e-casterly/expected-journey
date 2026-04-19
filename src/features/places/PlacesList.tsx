@@ -18,14 +18,12 @@ export function PlacesList() {
   const { data: places = [] } = usePlaces();
   console.log(places);
   return (
-    <div className="px-8 py-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Places</h1>
-          <p>Reusable locations for trip start points and quick planning.</p>
-        </div>
+    <div>
+      <div className="border-stroke border-b-2 px-8 py-4">
+        <h1 className="text-2xl font-medium">Places</h1>
+        <p>Reusable locations for trip start points and quick planning.</p>
       </div>
-      <ul className="mt-4 flex flex-col gap-2">
+      <ul className="flex flex-col gap-2 px-8 py-4">
         {places.map((place) => (
           <PlaceItem key={place.id} place={place} />
         ))}

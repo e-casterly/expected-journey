@@ -58,7 +58,7 @@ export function Button({
 
   const textByColor: Record<ButtonColor, string> = {
     primary:
-      "text-primary not-disabled:hover:text-primary/80 not-disabled:focus-visible:ring-primary",
+      "text-primary-d not-disabled:hover:text-contrast not-disabled:focus-visible:text-contrast",
     secondary:
       "text-foreground not-disabled:hover:text-foreground/80 not-disabled:focus-visible:ring-foreground",
     destructive:
@@ -80,12 +80,6 @@ export function Button({
     l: "h-12 px-6 py-2 text-base font-medium",
   };
 
-  const iconSizeClassNames: Record<ButtonSize, string> = {
-    s: "h-6 w-6",
-    m: "h-9 w-9",
-    l: "h-12 w-12",
-  };
-
   const textSizeClassNames: Record<ButtonSize, string> = {
     s: "text-sm",
     m: "text-base",
@@ -98,8 +92,7 @@ export function Button({
     {
       [sizeClassNames[size]]: !isIcon && variant !== "text",
       [textSizeClassNames[size]]: variant === "text",
-      [iconSizeClassNames[size]]: isIcon,
-      "rounded-md": isIcon,
+      "rounded-full p-1": isIcon,
       "w-full": fullWidth,
       [containedByColor[color]]: variant === "contained",
       [outlineByColor[color]]: variant === "outline",

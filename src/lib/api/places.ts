@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const placeSystemTagValues = ["favorite", "starred"] as const;
+export const placeSystemTagValues = ["starred"] as const;
 export type PlaceSystemTag = (typeof placeSystemTagValues)[number];
 export const PlaceSystemTagSchema = z.enum(placeSystemTagValues);
 

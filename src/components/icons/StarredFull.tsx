@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgStarredFull = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M11.723 2.188a.3.3 0 0 1 .556 0l2.51 6.205a.3.3 0 0 0 .257.186l6.677.47a.3.3 0 0 1 .172.53l-.223.186-4.903 4.117a.3.3 0 0 0-.099.302l1.547 6.213-.22.354-.405.1-5.432-3.39a.3.3 0 0 0-.318 0l-5.677 3.545-.088.038a.3.3 0 0 1-.362-.366l.07-.282 1.547-6.212a.3.3 0 0 0-.042-.24l-.057-.062-5.126-4.304a.3.3 0 0 1 .172-.53l6.677-.469a.3.3 0 0 0 .215-.113l.043-.073zm6.564 18.49a.3.3 0 0 1-.362.366l-.087-.038-.246-.155.404-.1.22-.354z" /></svg>;
+export default SvgStarredFull;

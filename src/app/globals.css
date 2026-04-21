@@ -58,6 +58,15 @@
   --inset-shadow-card: var(--inset-shadow-card);
   --shadow-field: var(--shadow-field);
   --inset-shadow-field: var(--inset-shadow-field);
+
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 120%;
+
+  --text-base: 1rem;
+  --text-base--line-height: 120%;
+
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 120%;
 }
 
 body {

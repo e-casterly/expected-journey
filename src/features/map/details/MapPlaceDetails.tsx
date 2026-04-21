@@ -5,17 +5,19 @@ import {
   useSetMarkerPosition,
   useSetSelectedPlace,
 } from "@/store";
-import { MapSavedPlace } from "@/features/map/MapSavedPlace";
+import { MapSavedPlace } from "@/features/map/details/MapSavedPlace";
 import { IconButton } from "@/components/shared/IconButton";
 import { Spinner } from "@/components/shared/Spinner";
 import { PlaceDetailed } from "@/lib/types/place";
 import type { PlaceDto } from "@/lib/api/places";
 import Image from "next/image";
 import cx from "classnames";
-import { MapPlaceString } from "@/features/map/MapPlaceString";
-import { MapPlaceNote } from "@/features/map/MapPlaceNote";
+import { MapPlaceString } from "@/features/map/details/MapPlaceString";
+import { MapPlaceNote } from "@/features/map/details/MapPlaceNote";
+import { MapPlaceCopyable } from "@/features/map/details/MapPlaceCopyable";
+import { MapPlaceTag } from "@/features/map/details/MapPlaceTag";
 
-export function MapPlaceInfo() {
+export function MapPlaceDetails() {
   const selectedPlace = useSelectedPlace();
   const setSelectedPlace = useSetSelectedPlace();
   const setMarkerPosition = useSetMarkerPosition();
@@ -83,7 +85,7 @@ export function MapPlaceInfo() {
             </div>
           )}
           <IconButton
-            className="absolute top-3 right-3"
+            className="absolute top-2 right-3"
             color="secondary"
             onClick={() => {
               setSelectedPlace(null);
@@ -106,20 +108,23 @@ export function MapPlaceInfo() {
           {selectedPlace.osmId && selectedPlace.osmType && (
             <MapSavedPlace savedPlace={savedPlace} />
           )}
-          {savedPlace && (
-            <MapPlaceNote key={savedPlace.id} place={savedPlace} />
-          )}
+          {savedPlace && <MapPlaceNote place={savedPlace} />}
+          {savedPlace && <MapPlaceTag place={savedPlace} />}
           {selectedPlace.address && (
-            <MapPlaceString string={selectedPlace.address} icon="Location2" />
+            <MapPlaceCopyable string={selectedPlace.address} icon="Location2" />
           )}
           {selectedPlace.lat && selectedPlace.lon && (
-            <MapPlaceString
+            <MapPlaceCopyable
               string={`${selectedPlace.lat}, ${selectedPlace.lon}`}
               icon="Location"
             />
           )}
           {extras?.phone && (
-            <MapPlaceString string={extras?.phone} icon="Phone" />
+            <MapPlaceString
+              string={extras?.phone}
+              href={`tel:${extras.phone}`}
+              icon="Phone"
+            />
           )}
           {extras?.website && (
             <MapPlaceString

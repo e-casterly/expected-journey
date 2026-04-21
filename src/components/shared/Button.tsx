@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ComponentPropsWithoutRef, ReactNode } from "react";
 import cx from "classnames";
 import { Spinner } from "@/components/shared/Spinner";
+import { Icon, IconType } from "@/components/shared/Icon";
 
 type ButtonVariant = "contained" | "outline" | "text" | "ghost";
 type ButtonColor = "primary" | "secondary" | "destructive";
@@ -16,6 +17,7 @@ export type ButtonBaseProps = {
   isLoading?: boolean;
   isIcon?: boolean;
   size?: ButtonSize;
+  withIcon?: IconType;
 };
 
 type ButtonAsButtonProps = ButtonBaseProps & {
@@ -35,11 +37,21 @@ export function Button({
   isLoading = false,
   isIcon = false,
   size = "m",
+  withIcon,
   ...props
 }: ButtonProps) {
+  const variantClassNames: Record<ButtonVariant, string> = {
+    contained:
+      "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    outline:
+      "rounded-sm focus-visible:outline-none border focus-visible:ring-2",
+    text: "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    ghost: "not-disabled:hover:bg-gray-100",
+  };
+
   const containedByColor: Record<ButtonColor, string> = {
     primary:
-      "bg-primary not-disabled:hover:bg-primary/90 not-disabled:focus-visible:ring-primary text-white",
+      "bg-primary not-disabled:hover:bg-primary-d not-disabled:focus-visible:ring-primary-d text-white",
     secondary:
       "bg-secondary not-disabled:hover:bg-gray-100 not-disabled:focus-visible:ring-secondary shadow-md",
     destructive:
@@ -48,13 +60,12 @@ export function Button({
 
   const outlineByColor: Record<ButtonColor, string> = {
     primary:
-      "bg-white border-primary/90 text-primary/90 not-disabled:hover:border-primary not-disabled:hover:text-primary not-disabled:focus-visible:ring-primary",
+      "bg-white border-primary text-primary not-disabled:hover:shadow-sm not-disabled:hover:border-primary-d not-disabled:hover:text-primary-d not-disabled:focus-visible:ring-primary-d",
     secondary:
       "bg-white not-disabled:hover:bg-gray-100 not-disabled:focus-visible:ring-secondary shadow-md",
     destructive:
       "bg-white not-disabled:hover:bg-destructive/90 not-disabled:focus-visible:ring-destructive",
   };
-
 
   const textByColor: Record<ButtonColor, string> = {
     primary:
@@ -65,25 +76,22 @@ export function Button({
       "text-destructive not-disabled:hover:text-destructive/80 not-disabled:focus-visible:ring-destructive",
   };
 
-  const variantClassNames: Record<ButtonVariant, string> = {
-    contained:
-      "rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    outline:
-      "rounded-md focus-visible:outline-none border focus-visible:ring-2",
-    text: "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    ghost: "not-disabled:hover:bg-gray-100",
-  };
-
   const sizeClassNames: Record<ButtonSize, string> = {
-    s: "h-6 px-4 py-2 text-sm font-medium",
-    m: "h-9 px-4 py-2 text-base font-medium",
-    l: "h-12 px-6 py-2 text-base font-medium",
+    s: "h-6 px-2 py-0.5 text-sm gap-0.5",
+    m: "h-9 px-4 py-2 text-base font-medium gap-1",
+    l: "h-12 px-6 py-2 text-base font-medium gap-1",
   };
 
   const textSizeClassNames: Record<ButtonSize, string> = {
     s: "text-sm",
     m: "text-base",
     l: "text-l font-medium",
+  };
+
+  const iconSizeClassNames: Record<ButtonSize, string> = {
+    s: "h-4 w-4",
+    m: "h-5 w-5",
+    l: "h-6 w-6",
   };
 
   const commonClasses = cx(
@@ -119,7 +127,16 @@ export function Button({
       disabled={disabled}
       {...rest}
     >
-      {isLoading ? <Spinner /> : children}
+      {withIcon && !isLoading && (
+        <Icon
+          icon={withIcon}
+          className={cx("shrink-0", iconSizeClassNames[size])}
+        />
+      )}
+      {isLoading && (
+        <Spinner className={cx("shrink-0", iconSizeClassNames[size])} />
+      )}
+      {children}
     </button>
   );
 }

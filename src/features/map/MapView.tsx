@@ -8,7 +8,7 @@ import type { MapLayerMouseEvent, MapRef } from "react-map-gl/maplibre";
 import { StyleSpecification } from "maplibre-gl";
 import { useMutation } from "@tanstack/react-query";
 import { MapControls } from "./MapControls";
-import { MapPlaceInfo } from "./MapPlaceInfo";
+import { MapPlaceDetails } from "./details/MapPlaceDetails";
 import { useSetMarkerPosition, useSetSelectedPlace } from "@/store";
 import { LatLon } from "@/lib/types/map";
 import { PlaceGeneral } from "@/lib/types/place";
@@ -79,7 +79,7 @@ export function MapView({
       </Map>
 
       <MapSearch mapRef={mapRef} />
-      <MapPlaceInfo />
+      <MapPlaceDetails />
 
       <MapControls
         onZoomIn={() => mapRef.current?.zoomIn()}

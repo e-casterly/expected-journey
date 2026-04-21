@@ -4,6 +4,8 @@ import "./globals.css";
 import classNames from "classnames";
 import Header from "@/components/layout/header/Header";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import cx from "classnames";
+import { ReactNode } from "react";
 
 const baseFont = Outfit({
   variable: "--font-base",
@@ -18,10 +20,10 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
-    <html lang="en" className={baseFont.variable}>
+    <html lang="en" className={cx(baseFont.variable, "leading-none")}>
       <body
         className={classNames(
           "bg-background grid min-h-screen grid-rows-[auto_1fr_auto] antialiased"

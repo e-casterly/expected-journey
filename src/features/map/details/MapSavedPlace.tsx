@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedPlace } from "@/store";
 import type { CreatePlaceInput, PlaceDto, PlaceResponse } from "@/lib/api/places";
-import { Icon } from "@/components/shared/Icon";
+import { MapPlaceString } from "@/features/map/details/MapPlaceString";
 
 type MapSavedPlaceProps = {
   savedPlace: PlaceDto | null | undefined;
@@ -33,7 +33,7 @@ export function MapSavedPlace({ savedPlace }: MapSavedPlaceProps) {
 
   if (!selectedPlace) return null;
 
-  // const isPending = isSaving || isRemoving;
+  const isPending = isSaving || isRemoving;
 
   function handleClick() {
     if (!selectedPlace) return;
@@ -54,15 +54,23 @@ export function MapSavedPlace({ savedPlace }: MapSavedPlaceProps) {
   }
 
   return (
-    <button
+    <MapPlaceString
       onClick={handleClick}
-      className="border-stroke hover:bg-primary-l text-primary grid cursor-pointer grid-cols-[auto_1fr] items-center gap-2 border-b bg-white px-4 py-2 text-left text-sm"
+      variant="savedProperty"
+      icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"}
+      className="group"
+      isLoading={isPending}
     >
-      <Icon
-        icon={savedPlace ? "BookmarkFulled" : "BookmarkAdd"}
-        className="h-6 w-6 shrink-0"
-      />
-      {savedPlace ? "Saved place" : "Save place"}
-    </button>
+      {savedPlace ? (
+        <>
+          <span className="group-hover:hidden">Saved</span>
+          <span className="hidden group-hover:block">
+            Remove the place from your list
+          </span>
+        </>
+      ) : (
+        <span>Save this place to find it later</span>
+      )}
+    </MapPlaceString>
   );
 }

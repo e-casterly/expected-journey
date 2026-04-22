@@ -8,15 +8,13 @@ import { ErrorList } from "@/components/shared/ErrorList";
 import { Label } from "@/components/shared/Label";
 import { useAppForm } from "@/lib/hooks/useAppForm";
 import { formatFormErrors } from "@/lib/formatFormErrors";
-import { CreateTripSchema, tripStatusValues } from "@/lib/api/trips";
-import type { TripResponse, TripStatus } from "@/lib/api/trips";
-import { MapView } from "@/features/map/MapView";
+import { CreateTripSchema } from "@/lib/api/trips";
+import type { TripResponse } from "@/lib/api/trips";
 
 const TripCreateFormSchema = z
   .object({
     title: CreateTripSchema.shape.title,
     description: z.string(),
-    status: z.enum(tripStatusValues),
     startDate: z.string(),
     endDate: z.string(),
   })
@@ -49,7 +47,6 @@ export function TripCreateForm() {
     defaultValues: {
       title: "",
       description: "",
-      status: "draft" as TripStatus,
       startDate: "",
       endDate: "",
     },
@@ -59,12 +56,14 @@ export function TripCreateForm() {
     onSubmit: async ({ value }) => {
       const payload: Record<string, string> = {
         title: value.title.trim(),
-        status: value.status,
       };
 
-      if (value.description.trim()) payload.description = value.description.trim();
-      if (value.startDate) payload.startDate = new Date(value.startDate).toISOString();
-      if (value.endDate) payload.endDate = new Date(value.endDate).toISOString();
+      if (value.description.trim())
+        payload.description = value.description.trim();
+      if (value.startDate)
+        payload.startDate = new Date(value.startDate).toISOString();
+      if (value.endDate)
+        payload.endDate = new Date(value.endDate).toISOString();
 
       try {
         const response = await fetch("/api/trips", {
@@ -76,7 +75,9 @@ export function TripCreateForm() {
         const responseJson = (await response.json().catch(() => null)) as
           | (Partial<TripResponse> & {
               message?: string;
-              fieldErrors?: Partial<Record<keyof TripCreateFormValues, string[]>>;
+              fieldErrors?: Partial<
+                Record<keyof TripCreateFormValues, string[]>
+              >;
             })
           | null;
 
@@ -107,182 +108,124 @@ export function TripCreateForm() {
   });
 
   return (
-    <section className="grid flex-1 grid-cols-[600px_1fr]">
-      <div className="px-8 py-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-zinc-900">
-              Create trip
-            </h1>
-          </div>
-          <Link
-            href="/trips"
-            className="text-sm text-zinc-700 underline underline-offset-4 hover:text-zinc-900"
-          >
-            Back to trips
-          </Link>
-        </div>
-
-        <form.AppForm>
-          <form
-            className="mt-4 space-y-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-            noValidate
-          >
-            <form.AppField name="title">
-              {(field) => (
-                <field.TextField
-                  label="Title"
-                  name={field.name}
-                  type="text"
-                  placeholder="Iceland 2026"
-                  required
-                />
-              )}
-            </form.AppField>
-
-            <form.AppField name="status">
-              {(field) => {
-                const errorMessages = !field.state.meta.isValid
-                  ? getFieldErrorMessages(field.state.meta.errors)
-                  : undefined;
-                const hasError = Boolean(errorMessages?.length);
-
-                return (
-                  <div className="w-full">
-                    <Label htmlFor="trip-status">Status</Label>
-                    <select
-                      id="trip-status"
-                      name={field.name}
-                      value={field.state.value}
-                      aria-invalid={hasError || undefined}
-                      onChange={(e) =>
-                        field.handleChange(e.target.value as TripStatus)
-                      }
-                      onBlur={field.handleBlur}
-                      className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
-                        hasError ? "border-destructive" : "border-stroke"
-                      }`}
-                    >
-                      {tripStatusValues.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                    <ErrorList messages={errorMessages} />
-                  </div>
-                );
-              }}
-            </form.AppField>
-
-            <form.AppField name="description">
-              {(field) => {
-                const errorMessages = !field.state.meta.isValid
-                  ? getFieldErrorMessages(field.state.meta.errors)
-                  : undefined;
-                const hasError = Boolean(errorMessages?.length);
-
-                return (
-                  <div className="w-full">
-                    <Label htmlFor="trip-description">Description</Label>
-                    <textarea
-                      id="trip-description"
-                      name={field.name}
-                      value={field.state.value}
-                      rows={4}
-                      aria-invalid={hasError || undefined}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-500 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
-                        hasError ? "border-destructive" : "border-stroke"
-                      }`}
-                      placeholder="Notes, goals, route ideas..."
-                    />
-                    <ErrorList messages={errorMessages} />
-                  </div>
-                );
-              }}
-            </form.AppField>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <form.AppField name="startDate">
-                {(field) => {
-                  const errorMessages = !field.state.meta.isValid
-                    ? getFieldErrorMessages(field.state.meta.errors)
-                    : undefined;
-                  const hasError = Boolean(errorMessages?.length);
-
-                  return (
-                    <div className="w-full">
-                      <Label htmlFor="trip-start-date">Start date</Label>
-                      <input
-                        id="trip-start-date"
-                        name={field.name}
-                        type="date"
-                        value={field.state.value}
-                        aria-invalid={hasError || undefined}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                        className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
-                          hasError ? "border-destructive" : "border-stroke"
-                        }`}
-                      />
-                      <ErrorList messages={errorMessages} />
-                    </div>
-                  );
-                }}
-              </form.AppField>
-
-              <form.AppField name="endDate">
-                {(field) => {
-                  const errorMessages = !field.state.meta.isValid
-                    ? getFieldErrorMessages(field.state.meta.errors)
-                    : undefined;
-                  const hasError = Boolean(errorMessages?.length);
-
-                  return (
-                    <div className="w-full">
-                      <Label htmlFor="trip-end-date">End date</Label>
-                      <input
-                        id="trip-end-date"
-                        name={field.name}
-                        type="date"
-                        value={field.state.value}
-                        aria-invalid={hasError || undefined}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                        className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
-                          hasError ? "border-destructive" : "border-stroke"
-                        }`}
-                      />
-                      <ErrorList messages={errorMessages} />
-                    </div>
-                  );
-                }}
-              </form.AppField>
-            </div>
-
-            <form.ErrorMessage />
-            <h2 className="text-xl font-semibold text-zinc-900">Itinerary</h2>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <form.SubscribeButton label="Create trip" fullWidth />
-              <Button
-                href="/trips"
-                variant="contained"
-                color="secondary"
-                fullWidth
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </form.AppForm>
+    <section className="flex h-full flex-col overflow-hidden">
+      <div className="border-stroke flex items-center justify-between gap-4 border-b-2 px-8 py-4">
+        <h1 className="text-2xl font-medium">Create trip</h1>
+        <Link
+          href="/trips"
+          className="text-sm text-zinc-700 underline underline-offset-4 hover:text-zinc-900"
+        >
+          Back to trips
+        </Link>
       </div>
-      <MapView />
+      <div className="h-full w-full overflow-hidden">
+        <div className="flex h-full w-full flex-col overflow-auto px-8 py-4">
+          <form.AppForm>
+            <form
+              className="mt-4 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
+              noValidate
+            >
+              <form.AppField name="title">
+                {(field) => (
+                  <field.TextField
+                    label="Title"
+                    name={field.name}
+                    type="text"
+                    placeholder="Iceland 2026"
+                    required
+                  />
+                )}
+              </form.AppField>
+
+              <form.AppField name="description">
+                {(field) => (
+                  <field.TextareaField
+                    label="Description"
+                    placeholder="Notes, goals, route ideas..."
+                    rows={4}
+                  />
+                )}
+              </form.AppField>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <form.AppField name="startDate">
+                  {(field) => {
+                    const errorMessages = !field.state.meta.isValid
+                      ? getFieldErrorMessages(field.state.meta.errors)
+                      : undefined;
+                    const hasError = Boolean(errorMessages?.length);
+
+                    return (
+                      <div className="w-full">
+                        <Label htmlFor="trip-start-date">Start date</Label>
+                        <input
+                          id="trip-start-date"
+                          name={field.name}
+                          type="date"
+                          value={field.state.value}
+                          aria-invalid={hasError || undefined}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                          className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
+                            hasError ? "border-destructive" : "border-stroke"
+                          }`}
+                        />
+                        <ErrorList messages={errorMessages} />
+                      </div>
+                    );
+                  }}
+                </form.AppField>
+
+                <form.AppField name="endDate">
+                  {(field) => {
+                    const errorMessages = !field.state.meta.isValid
+                      ? getFieldErrorMessages(field.state.meta.errors)
+                      : undefined;
+                    const hasError = Boolean(errorMessages?.length);
+
+                    return (
+                      <div className="w-full">
+                        <Label htmlFor="trip-end-date">End date</Label>
+                        <input
+                          id="trip-end-date"
+                          name={field.name}
+                          type="date"
+                          value={field.state.value}
+                          aria-invalid={hasError || undefined}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                          className={`mt-0.5 w-full rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none ${
+                            hasError ? "border-destructive" : "border-stroke"
+                          }`}
+                        />
+                        <ErrorList messages={errorMessages} />
+                      </div>
+                    );
+                  }}
+                </form.AppField>
+              </div>
+
+              <form.ErrorMessage />
+              <h2 className="text-xl font-semibold text-zinc-900">Itinerary</h2>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <form.SubscribeButton label="Create trip" fullWidth />
+                <Button
+                  href="/trips"
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </form.AppForm>
+        </div>
+      </div>
     </section>
   );
 }

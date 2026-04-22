@@ -9,7 +9,7 @@ type PageLayoutProps = Readonly<{
 
 export default function PageLayout({ children, title, description, aside }: PageLayoutProps) {
   return (
-    <section className="flex flex-col">
+    <main className="flex flex-col">
       <div className="border-b border-stroke py-6">
         <div className="container mx-auto flex items-center justify-between gap-4">
           {title && (
@@ -23,7 +23,9 @@ export default function PageLayout({ children, title, description, aside }: Page
           <div>{aside}</div>
         </div>
       </div>
-      <div className="container mx-auto flex flex-1 flex-col">{children}</div>
-    </section>
+      <div className="container mx-auto flex flex-1 flex-col py-6">
+        {children}
+      </div>
+    </main>
   );
 }

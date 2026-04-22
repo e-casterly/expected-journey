@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import cx from "classnames";
 import { ReactNode } from "react";
+import Header from "@/components/layout/header/Header";
 
 const baseFont = Outfit({
   variable: "--font-base",
@@ -28,7 +29,10 @@ export default function RootLayout({
           "bg-background flex min-h-screen flex-col overflow-hidden antialiased"
         )}
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <Header />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

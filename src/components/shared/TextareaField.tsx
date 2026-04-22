@@ -42,16 +42,16 @@ export function TextareaField({
   const showError = Boolean(errorMessages?.length);
 
   return (
-    <div className={classNames("w-full flex", wrapperClassName)}>
+    <div className={classNames("w-full flex flex-col", wrapperClassName)}>
       {label && (
-        <Label htmlFor={inputId} className={cx("mb-0.5", labelClassName)}>
+        <Label htmlFor={inputId} className={cx("inline-flex pb-0.5", labelClassName)}>
           {label}
         </Label>
       )}
       <textarea
         id={inputId}
         className={classNames(
-          "w-full rounded-md border bg-white text-zinc-900 placeholder-zinc-500 transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10 focus:outline-none",
+          "w-full rounded-md border bg-field placeholder:text-placeholder transition focus:border-contrast focus:ring-1 focus:ring-contrast focus:outline-none",
           sizeClassNames[size],
           showError ? "border-destructive" : "border-stroke",
           className

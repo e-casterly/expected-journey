@@ -1,22 +1,29 @@
-import { useId } from "react";
+import { type FocusEvent, type KeyboardEvent, useId } from "react";
 import { Dropdown, useDropdownContext } from "@/components/shared/dropdown";
-import { TextField, type TextInputProps } from "@/components/shared/TextField";
+import { IconButton } from "@/components/shared/IconButton";
 import { useAutocompleteKeyboard } from "@/components/shared/autocomplete/useAutocompleteKeyboard";
 import type { AutocompleteItem } from "@/components/shared/autocomplete";
 
-export type AutocompleteFieldProps<TValue = string> = Omit<
-  TextInputProps,
-  "afterInput" | "onChange" | "onSelect"
-> & {
-  items: AutocompleteItem<TValue>[];
+export type AutocompleteFieldProps<TValue = string> = {
+  value: string;
+  placeholder?: string;
+  disabled?: boolean;
   isLoading?: boolean;
   emptyMessage?: string;
   noResultsMessage?: string;
+  items: AutocompleteItem<TValue>[];
   onQueryChange: (value: string) => void;
   onSelect: (item: AutocompleteItem<TValue>) => void;
+  onClear?: () => void;
+  onSearch?: () => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 };
 
 function AutocompleteFieldInner<TValue = string>({
+  value,
+  placeholder,
+  disabled,
   items,
   isLoading = false,
   emptyMessage = "Start typing to search",
@@ -27,8 +34,6 @@ function AutocompleteFieldInner<TValue = string>({
   onSearch,
   onFocus,
   onKeyDown,
-  value,
-  ...props
 }: AutocompleteFieldProps<TValue>) {
   const { getReferenceProps, setReference, open, onOpenChange } = useDropdownContext();
 
@@ -67,33 +72,57 @@ function AutocompleteFieldInner<TValue = string>({
 
   return (
     <>
-      <TextField
-        {...props}
-        {...getReferenceProps({
-          "aria-expanded": open || undefined,
-          "aria-controls": open ? listboxId : undefined,
-          "aria-activedescendant": activeDescendantId,
-        })}
-        containerRef={setReference as (node: HTMLDivElement | null) => void}
-        value={value}
-        autoComplete="off"
-        aria-autocomplete="list"
-        onClear={onClear ? handleClear : undefined}
-        onSearch={onSearch ? handleSearch : undefined}
-        onChange={(event) => {
-          onQueryChange(event.target.value);
-          onOpenChange(event.target.value.trim().length > 0);
-          setHighlightedIndex(-1);
-        }}
-        onFocus={(event) => {
-          onFocus?.(event);
-          if (shouldOpenOnFocus) onOpenChange(true);
-        }}
-        onKeyDown={(event) => {
-          onKeyDown?.(event);
-          if (!event.defaultPrevented) handleKeyDown(event);
-        }}
-      />
+      <div
+        className="relative"
+        ref={setReference as (node: HTMLDivElement | null) => void}
+      >
+        <input
+          {...getReferenceProps({
+            "aria-expanded": open || undefined,
+            "aria-controls": open ? listboxId : undefined,
+            "aria-activedescendant": activeDescendantId,
+          })}
+          value={value}
+          placeholder={placeholder}
+          disabled={disabled}
+          autoComplete="off"
+          aria-autocomplete="list"
+          className="text-foreground shadow-field inset-shadow-field focus:ring-contrast border-stroke placeholder:text-placeholder h-10 w-full rounded-full border bg-field-secondary px-4 py-2 text-base transition focus:ring-2 focus:outline-none disabled:cursor-default disabled:opacity-50"
+          onChange={(e) => {
+            onQueryChange(e.target.value);
+            onOpenChange(e.target.value.trim().length > 0);
+            setHighlightedIndex(-1);
+          }}
+          onFocus={(e) => {
+            onFocus?.(e);
+            if (shouldOpenOnFocus) onOpenChange(true);
+          }}
+          onKeyDown={(e) => {
+            onKeyDown?.(e);
+            if (!e.defaultPrevented) handleKeyDown(e);
+          }}
+        />
+        <div className="text-icon-field absolute inset-y-0 right-0 flex items-center gap-0.5 pr-2">
+          {hasQuery && onSearch && (
+            <IconButton
+              onClick={onSearch}
+              onMouseDown={(e) => e.preventDefault()}
+              label="Search"
+              icon="Search"
+              size="l"
+            />
+          )}
+          {hasQuery && onClear && (
+            <IconButton
+              onClick={handleClear}
+              onMouseDown={(e) => e.preventDefault()}
+              label="Clear"
+              icon="Close"
+              size="l"
+            />
+          )}
+        </div>
+      </div>
 
       <Dropdown.Content id={listboxId}>
         {isLoading ? (
@@ -109,11 +138,11 @@ function AutocompleteFieldInner<TValue = string>({
                 onSelectAction={() => handleSelect(item)}
               >
                 <span>{item.label}</span>
-                {item.description ? (
+                {item.description && (
                   <span className="mt-0.5 text-xs text-zinc-500">
                     {item.description}
                   </span>
-                ) : null}
+                )}
               </Dropdown.Option>
             ))}
           </Dropdown.List>

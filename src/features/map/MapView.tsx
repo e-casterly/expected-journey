@@ -63,7 +63,7 @@ export function MapView({
   const viewCenter = initialPosition ?? DEFAULT_MAP_POSITION;
 
   return (
-    <div className="relative flex-1">
+    <section className="relative flex-1">
       <Map
         ref={mapRef}
         initialViewState={{
@@ -85,6 +85,6 @@ export function MapView({
         onZoomIn={() => mapRef.current?.zoomIn()}
         onZoomOut={() => mapRef.current?.zoomOut()}
       />
-    </div>
+    </section>
   );
 }

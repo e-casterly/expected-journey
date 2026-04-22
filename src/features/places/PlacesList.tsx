@@ -16,9 +16,9 @@ function usePlaces() {
 
 export function PlacesList() {
   const { data: places = [] } = usePlaces();
-  console.log(places);
+
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <section className="h-full flex flex-col overflow-hidden">
       <div className="border-stroke border-b-2 px-8 py-4">
         <h1 className="text-2xl font-medium">Places</h1>
         <p>Reusable locations for trip start points and quick planning.</p>
@@ -32,6 +32,6 @@ export function PlacesList() {
           </ul>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

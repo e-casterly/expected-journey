@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { TripCreateForm } from "@/features/trips/create/TripCreateForm";
+import MapLayout from "@/components/layout/page/MapLayout";
+import { TripCreateClient } from "@/features/trips/create/TripCreateClient";
 
 export default async function NewTripPage() {
   const session = await auth.api.getSession({
@@ -12,5 +13,9 @@ export default async function NewTripPage() {
     redirect("/signin");
   }
 
-  return <TripCreateForm />;
+  return (
+    <MapLayout>
+      <TripCreateClient />
+    </MapLayout>
+  );
 }

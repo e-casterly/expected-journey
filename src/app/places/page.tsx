@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { PlaceClient } from "@/features/places/PlaceClient";
+import MapLayout from "@/components/layout/page/MapLayout";
 
 export default async function PlacesPage() {
   const session = await auth.api.getSession({
@@ -12,5 +13,5 @@ export default async function PlacesPage() {
     redirect("/signin");
   }
 
-  return <PlaceClient />;
+  return <MapLayout><PlaceClient /></MapLayout>;
 }

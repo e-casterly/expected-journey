@@ -10,13 +10,19 @@ export default function formatOsmExtratags(
   const phone = extra?.phone ?? extra?.["contact:phone"];
   const website = extra?.website ?? extra?.["contact:website"];
   const email = extra?.email ?? extra?.["contact:email"];
-  const instagram = extra?.["contact:instagram"];
+  const instagramRaw = extra?.["contact:instagram"];
+  const instagram = instagramRaw
+    ? `https://instagram.com/${instagramRaw.replace(/^@/, "")}`
+    : undefined;
+  const facebook = extra?.["contact:facebook"];
   return {
+    imageUrl: "",
     openingHours: extra?.opening_hours ?? "",
     phone: phone ?? "",
     website: website ?? "",
     email: email ?? "",
     instagram: instagram ?? "",
+    facebook: facebook ?? "",
     cuisine: extra?.cuisine ? formatOsmTag(extra.cuisine) : "",
     wheelchair: extra?.wheelchair ?? "",
     description: extra?.description ?? "",

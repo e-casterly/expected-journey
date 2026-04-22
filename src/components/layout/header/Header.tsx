@@ -12,7 +12,7 @@ export default async function Header() {
   const user = session?.user;
   return (
     <header className="bg-linear-to-r from-[#E9F1F1] via-[#F3F3E9] via-83% to-[#F3F3E9] shadow-header">
-      <div className="container mx-auto flex h-14 items-center justify-between">
+      <div className="container mx-auto flex h-(--header-height) items-center justify-between">
         <Link href="/">
           <Image
             src="/logo.svg"

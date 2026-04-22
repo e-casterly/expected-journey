@@ -53,8 +53,8 @@ export function MapPlaceDetails() {
   const isLoading = isLookupLoading || isSavedPlaceLoading;
 
   const extras = detailedPlace?.extratags;
-  const wikidata = detailedPlace?.wikidata;
-  const coverUrl = wikidata?.imageUrl;
+
+  const hasSocialMedia = extras?.instagram || extras?.facebook;
 
   if (!selectedPlace) {
     return null;
@@ -68,15 +68,17 @@ export function MapPlaceDetails() {
         </div>
       ) : (
         <>
-          {coverUrl && (
+          {extras?.imageUrl && (
             <div
               className={cx(
                 "relative w-full",
-                coverUrl ? "h-40" : "flex items-center justify-center p-3"
+                extras.imageUrl
+                  ? "h-40"
+                  : "flex items-center justify-center p-3"
               )}
             >
               <Image
-                src={coverUrl}
+                src={extras.imageUrl}
                 alt={selectedPlace.name}
                 fill
                 className="object-cover"
@@ -97,12 +99,12 @@ export function MapPlaceDetails() {
           <div
             className={cx(
               "border-stroke border-b-2 py-2 ps-4",
-              !coverUrl ? "pe-14" : "pe-4"
+              !extras?.imageUrl ? "pe-14" : "pe-4"
             )}
           >
             <p className="text-lg font-medium">{selectedPlace.name}</p>
-            {wikidata?.description && (
-              <p className="text-sm">{wikidata.description}</p>
+            {extras?.description && (
+              <p className="text-sm">{extras.description}</p>
             )}
           </div>
           {selectedPlace.osmId && selectedPlace.osmType && (
@@ -135,18 +137,40 @@ export function MapPlaceDetails() {
               icon="Website"
             />
           )}
-          <div className="flex flex-col gap-1 px-3 py-2 text-xs">
-            {extras?.email && (
-              <a
-                href={`mailto:${extras.email}`}
-                className="truncate text-xs text-blue-600 hover:underline"
-              >
-                {extras.email}
-              </a>
-            )}
-            {extras?.openingHours && <p>{extras.openingHours}</p>}
-            {extras?.instagram && <p>{extras.instagram}</p>}
-          </div>
+          {extras?.email && (
+            <MapPlaceString
+              href={`mailto:${extras.email}`}
+              string={extras.email}
+              icon="Email"
+            />
+          )}
+          {extras?.openingHours && (
+            <MapPlaceString string={extras.openingHours} icon="Clock" />
+          )}
+          {hasSocialMedia && (
+            <div className="flex justify-center gap-1 px-4 py-2">
+              {extras?.instagram && (
+                <IconButton
+                  href={extras.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="m"
+                  icon="Instagram"
+                  label="Instagram"
+                />
+              )}
+              {extras?.facebook && (
+                <IconButton
+                  href={extras.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="m"
+                  icon="Facebook"
+                  label="Facebook"
+                />
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

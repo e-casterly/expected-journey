@@ -8,6 +8,8 @@ type WikidataEntity = {
     P856?: { mainsnak: { datavalue?: { value: string } } }[]; // official website
     P154?: { mainsnak: { datavalue?: { value: string } } }[]; // logo
     P18?: { mainsnak: { datavalue?: { value: string } } }[];  // image
+    P2003?: { mainsnak: { datavalue?: { value: string } } }[]; // instagram username
+    P2013?: { mainsnak: { datavalue?: { value: string } } }[]; // facebook profile
   };
 };
 
@@ -53,7 +55,13 @@ export async function fetchWikidata(
     const imageFilename = entity.claims?.P18?.[0]?.mainsnak?.datavalue?.value ?? null;
     const imageUrl = imageFilename ? buildImageUrl(imageFilename) : null;
 
-    return { label, description, website, imageUrl };
+    const instagramUsername = entity.claims?.P2003?.[0]?.mainsnak?.datavalue?.value ?? null;
+    const instagram = instagramUsername ? `https://instagram.com/${instagramUsername}` : null;
+
+    const facebookProfile = entity.claims?.P2013?.[0]?.mainsnak?.datavalue?.value ?? null;
+    const facebook = facebookProfile ? `https://facebook.com/${facebookProfile}` : null;
+
+    return { label, description, website, imageUrl, instagram, facebook };
   } catch {
     return null;
   }

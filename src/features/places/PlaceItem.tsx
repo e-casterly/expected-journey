@@ -5,6 +5,7 @@ import {
   useSetSelectedPlace,
 } from "@/store";
 import cx from "classnames";
+import { Icon } from "@/components/shared/Icon";
 
 type PlaceItemProps = {
   place: PlaceDto;
@@ -29,18 +30,25 @@ export function PlaceItem({ place }: PlaceItemProps) {
   }
 
   const isSelected = selectedPlace?.id === place.id;
+  const isStarred = place.systemTags.includes("starred");
 
   return (
     <li className="group relative">
       <button
         className={cx(
-          "w-full cursor-pointer rounded-xl border-2 px-4 py-3 text-left",
+          "flex w-full cursor-pointer flex-col gap-0.5 rounded-xl border-2 py-3 ps-4 text-left",
           isSelected
             ? "border-stroke-primary bg-primary text-foreground-inverse inset-shadow-card"
-            : "text-foreground bg-primary-l border-primary-l hover:border-stroke-primary"
+            : "text-foreground bg-primary-l border-primary-l hover:border-stroke-primary",
+          isStarred ? "pe-8" : "pe-4"
         )}
         onClick={handleClick}
       >
+        {place.systemTags.includes("starred") && (
+          <div className="bg-contrast text-foreground-inverse absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center self-start rounded-full text-sm">
+            <Icon icon="StarredFull" className="h-4 w-4" />
+          </div>
+        )}
         <p className="text-lg font-medium">{place.name}</p>
         {place.notes && <p className="text-sm">{place.notes}</p>}
         {place.address && <p className="text-sm">{place.address}</p>}

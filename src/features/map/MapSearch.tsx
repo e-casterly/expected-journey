@@ -28,7 +28,7 @@ export function MapSearch({ mapRef }: MapSearchProps) {
 
   const [displayValue, setDisplayValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, flushSearchQuery] = useDebouncedValue(searchQuery, 12000);
+  const [debouncedSearchQuery, flushSearchQuery] = useDebouncedValue(searchQuery, 1200);
 
   const { data: searchResults = [], isFetching } = useQuery({
     queryKey: ["geocode-search", debouncedSearchQuery],

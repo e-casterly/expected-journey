@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Button,
   ButtonBaseProps,
@@ -7,12 +8,14 @@ import { Icon, IconType } from "@/components/shared/Icon";
 import type { ComponentPropsWithoutRef } from "react";
 import cx from "classnames";
 
+type IconButtonBase = Omit<ButtonBaseProps, "children" | "isIcon"> & {
+  icon: IconType;
+  label: string;
+};
+
 type IconButtonProps =
-  Omit<ButtonBaseProps, "children" | "isIcon"> &
-  Omit<ComponentPropsWithoutRef<"button">, "children"> & {
-    icon: IconType;
-    label: string;
-  };
+  | (IconButtonBase & Omit<ComponentPropsWithoutRef<"button">, "children"> & { href?: never })
+  | (IconButtonBase & ComponentPropsWithoutRef<typeof Link>);
 
 export function IconButton({ icon, label, size = "s", variant = "ghost", ...props }: IconButtonProps) {
   const sizeClassNames: Record<ButtonSize, string> = {

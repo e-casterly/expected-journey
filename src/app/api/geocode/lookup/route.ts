@@ -72,11 +72,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
     console.log(item);
-    const wikidataId = item.extratags?.wikidata;
+    const wikidataId = item.extratags?.wikidata || item.extratags?.["brand:wikidata"];
     const place = buildPlaceObject(item);
     const wikidata = wikidataId ? await fetchWikidata(wikidataId) : null;
 
-    return NextResponse.json<LookupResponse>({ ...place, wikidata });
+    const extratags = place.extratags
+      ? {
+          ...place.extratags,
+          description:
+            place.extratags.description || wikidata?.description || "",
+          imageUrl: wikidata?.imageUrl || "",
+          instagram: place.extratags.instagram || wikidata?.instagram || "",
+          facebook: place.extratags.facebook || wikidata?.facebook || "",
+          website: place.extratags.website || wikidata?.website || "",
+        }
+      : place.extratags;
+
+    return NextResponse.json<LookupResponse>({ ...place, extratags });
   } catch {
     return NextResponse.json(
       { message: "Failed to reach geocoding service" },

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import classNames from "classnames";
-import Header from "@/components/layout/header/Header";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import cx from "classnames";
 import { ReactNode } from "react";
@@ -26,19 +25,10 @@ export default function RootLayout({
     <html lang="en" className={cx(baseFont.variable, "leading-none")}>
       <body
         className={classNames(
-          "bg-background grid min-h-screen grid-rows-[auto_1fr_auto] antialiased"
+          "bg-background flex min-h-screen flex-col overflow-hidden antialiased"
         )}
       >
-        <QueryProvider>
-          <Header />
-
-          <main className="flex flex-col">{children}</main>
-          <footer>
-            <div className="container mx-auto py-2 text-center text-sm text-zinc-500">
-              &copy; {new Date().getFullYear()} The Expected Journey
-            </div>
-          </footer>
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

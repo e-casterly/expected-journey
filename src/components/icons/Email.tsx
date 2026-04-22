@@ -1,0 +1,4 @@
+import * as React from "react";
+import type { SVGProps } from "react";
+const SvgEmail = (props: SVGProps<SVGSVGElement>) => <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M20 5.75a.253.253 0 0 0-.25-.25h-16a.253.253 0 0 0-.25.25v12c0 .136.114.25.25.25h16c.136 0 .25-.114.25-.25zm1.5 12c0 .964-.786 1.75-1.75 1.75h-16c-.964 0-1.75-.786-1.75-1.75v-12C2 4.786 2.786 4 3.75 4h16c.964 0 1.75.786 1.75 1.75z" /><path fill="currentColor" d="M20.36 5.61a.75.75 0 1 1 .78 1.28l-8.478 5.181a1.75 1.75 0 0 1-1.824 0L2.359 6.89a.75.75 0 1 1 .782-1.28l8.48 5.181c.08.049.179.049.259 0z" /></svg>;
+export default SvgEmail;

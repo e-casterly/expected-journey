@@ -22,7 +22,9 @@ export type NominatimExtraTags = {
   wheelchair?: string;
   description?: string;
   "contact:instagram"?: string;
+  "contact:facebook"?: string;
   wikidata?: string;
+  "brand:wikidata"?: string;
 };
 
 export type NominatimResult = {
